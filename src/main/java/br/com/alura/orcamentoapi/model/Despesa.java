@@ -1,12 +1,12 @@
 package br.com.alura.orcamentoapi.model;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -24,11 +24,9 @@ public class Despesa {
     @NotBlank
     private String descricao;
 
-    @NotBlank
     private Float valor;
 
-    @NotBlank
-    private LocalDateTime data;
+    private LocalDate data;
 
     @Override
     public boolean equals(Object o) {

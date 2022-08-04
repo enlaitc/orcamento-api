@@ -23,19 +23,15 @@ public class DespesaServiceImpl implements DespesaService {
 
     @Transactional
     @Override
-    public Despesa adicionaDespesa(Despesa despesa){
+    public Despesa adicionaDespesa(Despesa despesa) {
         LocalDate data = despesa.getData();
-        String desc = despesa.getDescricao();
+        despesaExiste(despesa.getId());
 
-        List<Despesa> despesaExist = repository.findByDescricao(desc);
-
-        if(!despesaExist.isEmpty()){
-            despesaExist.forEach(r -> {
-                if(r.getData().getMonthValue() == data.getMonthValue() && r.getData().getYear() == data.getYear() ){
-                    throw new RuntimeException("Mes e data repetidos.");
-                }
-            });
-        }
+        repository.findByDescricao(despesa.getDescricao()).forEach(d -> {
+            if (d.getData().getMonthValue() == data.getMonthValue() && d.getData().getYear() == data.getYear()) {
+                throw new RuntimeException("Mes e data repetidos.");
+            }
+        });
 
         return repository.save(despesa);
     }
@@ -47,31 +43,32 @@ public class DespesaServiceImpl implements DespesaService {
 
     @Override
     public Despesa buscaDespesa(Long despesaId) {
-        Optional<Despesa> despesa = repository.findById(despesaId);
+        despesaExiste(despesaId);
 
-        if(despesa.isEmpty()) throw new RuntimeException("Despesa não existe");
-
-        return despesa.get();
+        return repository.findById(despesaId).get();
     }
 
     @Transactional
     @Override
-    public ResponseEntity<Despesa> atualizaDespesa(Long despedaId, Despesa despesaUp) {
-        if(!repository.existsById(despedaId)) return ResponseEntity.notFound().build();
+    public ResponseEntity<Despesa> atualizaDespesa(Long despesaId, Despesa despesaUp) {
+        despesaExiste(despesaId);
 
-        despesaUp.setId(despedaId);
+        despesaUp.setId(despesaId);
 
         return ResponseEntity.ok(adicionaDespesa(despesaUp));
     }
 
     @Override
     public ResponseEntity<Void> deletaDespesa(Long despesaId) {
-        if(!repository.existsById(despesaId)) return ResponseEntity.notFound().build();
+        despesaExiste(despesaId);
 
         repository.deleteById(despesaId);
 
         return ResponseEntity.noContent().build();
     }
 
+    public void despesaExiste(Long despedaId) {
+        if (!repository.existsById(despedaId)) throw new RuntimeException("Despesa não existe.");
+    }
 
 }

@@ -27,9 +27,14 @@ public class ReceitaController {
         return service.buscaTodasReceitas();
     }
 
-    @GetMapping("/{receitaId}")
-    public Receita buscaReceita(@PathVariable Long receitaId){
-        return service.buscaReceita(receitaId);
+    @GetMapping("/id/{receitaId}")
+    public Receita buscaReceitaPorId(@PathVariable Long receitaId){
+        return service.buscaReceitaPorId(receitaId);
+    }
+
+    @GetMapping("/desc/{receitaDesc}")
+    public List<Receita> buscaReceitaPorDesc(@PathVariable String receitaDesc){
+        return service.buscaReceitaPorDesc(receitaDesc);
     }
 
     @PutMapping("/{receitaId}")

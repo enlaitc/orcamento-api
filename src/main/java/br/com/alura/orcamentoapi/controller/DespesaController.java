@@ -27,9 +27,14 @@ public class DespesaController {
         return service.buscaTodasDespesas();
     }
 
-    @GetMapping("/{despesaId}")
+    @GetMapping("/id/{despesaId}")
     public Despesa buscaDespesaPorId(@PathVariable Long despesaId){
         return service.buscaDespesaPorId(despesaId);
+    }
+
+    @GetMapping("/desc/{despesaDesc}")
+    public List<Despesa> buscaDespesaPorDesc(@PathVariable String despesaDesc){
+        return service.buscaDespesaPorDesc(despesaDesc);
     }
 
     @PutMapping("/{despesaId}")

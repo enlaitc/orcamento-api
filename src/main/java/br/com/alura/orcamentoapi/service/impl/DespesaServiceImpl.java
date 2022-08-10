@@ -49,6 +49,11 @@ public class DespesaServiceImpl implements DespesaService {
         return repository.findById(despesaId).get();
     }
 
+    @Override
+    public List<Despesa> buscaDespesaPorDesc(String despesaDesc) {
+       return repository.findByDescricao(despesaDesc);
+    }
+
     @Transactional
     @Override
     public ResponseEntity<Despesa> atualizaDespesa(Long despesaId, Despesa despesaUp) {

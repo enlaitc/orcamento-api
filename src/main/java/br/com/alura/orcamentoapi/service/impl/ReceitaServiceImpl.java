@@ -37,10 +37,15 @@ public class ReceitaServiceImpl implements ReceitaService {
     }
 
     @Override
-    public Receita buscaReceita(Long receitaId) {
+    public Receita buscaReceitaPorId(Long receitaId) {
         receitaExiste(receitaId);
 
         return repository.findById(receitaId).get();
+    }
+
+    @Override
+    public List<Receita> buscaReceitaPorDesc(String receitaDesc) {
+        return repository.findByDescricao(receitaDesc);
     }
 
     @Transactional

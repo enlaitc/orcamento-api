@@ -9,7 +9,8 @@ public interface ReceitaService {
 
     Receita adicionaReceita(Receita receita);
     List<Receita> buscaTodasReceitas();
-    Receita buscaReceita(Long receitaId);
+    Receita buscaReceitaPorId(Long receitaId);
+    List<Receita> buscaReceitaPorDesc(String receitaDesc);
     ResponseEntity<Receita> atualizaReceita(Long receitaId, Receita body);
     ResponseEntity<Void> deletaReceita(Long receitaId);
 }

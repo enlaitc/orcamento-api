@@ -1,9 +1,7 @@
 package br.com.alura.orcamentoapi.controller;
 
 import br.com.alura.orcamentoapi.model.Despesa;
-import br.com.alura.orcamentoapi.model.Receita;
 import br.com.alura.orcamentoapi.service.DespesaService;
-import br.com.alura.orcamentoapi.service.ReceitaService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,9 +27,14 @@ public class DespesaController {
         return service.buscaTodasDespesas();
     }
 
-    @GetMapping("/{despesaId}")
-    public Despesa buscaDespesa(@PathVariable Long despesaId){
-        return service.buscaDespesa(despesaId);
+    @GetMapping("/id/{despesaId}")
+    public Despesa buscaDespesaPorId(@PathVariable Long despesaId){
+        return service.buscaDespesaPorId(despesaId);
+    }
+
+    @GetMapping("/desc/{despesaDesc}")
+    public List<Despesa> buscaDespesaPorDesc(@PathVariable String despesaDesc){
+        return service.buscaDespesaPorDesc(despesaDesc);
     }
 
     @PutMapping("/{despesaId}")

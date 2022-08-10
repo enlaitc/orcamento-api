@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -20,19 +19,14 @@ public class ReceitaServiceImpl implements ReceitaService {
 
     @Transactional
     @Override
-    public Receita adicionaReceita(Receita receita){
+    public Receita adicionaReceita(Receita receita) {
         LocalDate data = receita.getData();
-        String desc = receita.getDescricao();
 
-        List<Receita> receitaExist = repository.findByDescricao(desc);
-
-        if(!receitaExist.isEmpty()){
-            receitaExist.forEach(r -> {
-                if(r.getData().getMonthValue() == data.getMonthValue() && r.getData().getYear() == data.getYear() ){
-                    throw new RuntimeException("Mes e data repetidos.");
-                }
-            });
-        }
+        repository.findByDescricao(receita.getDescricao()).forEach(r -> {
+            if (r.getData().getMonthValue() == data.getMonthValue() && r.getData().getYear() == data.getYear()) {
+                throw new RuntimeException("Mes e data repetidos.");
+            }
+        });
 
         return repository.save(receita);
     }
@@ -43,18 +37,21 @@ public class ReceitaServiceImpl implements ReceitaService {
     }
 
     @Override
-    public Receita buscaReceita(Long receitaId) {
-        Optional<Receita> receita = repository.findById(receitaId);
+    public Receita buscaReceitaPorId(Long receitaId) {
+        receitaExiste(receitaId);
 
-        if(receita.isEmpty()) throw new RuntimeException("Receita não existe");
+        return repository.findById(receitaId).get();
+    }
 
-        return receita.get();
+    @Override
+    public List<Receita> buscaReceitaPorDesc(String receitaDesc) {
+        return repository.findByDescricao(receitaDesc);
     }
 
     @Transactional
     @Override
     public ResponseEntity<Receita> atualizaReceita(Long receitaId, Receita receitaUp) {
-        if(!repository.existsById(receitaId)) return ResponseEntity.notFound().build();
+        receitaExiste(receitaId);
 
         receitaUp.setId(receitaId);
 
@@ -63,12 +60,15 @@ public class ReceitaServiceImpl implements ReceitaService {
 
     @Override
     public ResponseEntity<Void> deletaReceita(Long receitaId) {
-        if(!repository.existsById(receitaId)) return ResponseEntity.notFound().build();
+        receitaExiste(receitaId);
 
         repository.deleteById(receitaId);
 
         return ResponseEntity.noContent().build();
     }
 
+    public void receitaExiste(Long receitaId) {
+        if (!repository.existsById(receitaId)) throw new RuntimeException("Receita não existe.");
+    }
 
 }

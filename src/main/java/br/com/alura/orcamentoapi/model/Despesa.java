@@ -7,7 +7,6 @@ import org.hibernate.Hibernate;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 
@@ -27,6 +26,9 @@ public class Despesa {
     private Float valor;
 
     private LocalDate data;
+
+    @Enumerated(EnumType.STRING)
+    private CategoriaDespesa categoria;
 
     @Override
     public boolean equals(Object o) {

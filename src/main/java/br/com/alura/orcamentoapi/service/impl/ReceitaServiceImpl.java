@@ -21,7 +21,6 @@ public class ReceitaServiceImpl implements ReceitaService {
     @Override
     public Receita adicionaReceita(Receita receita) {
         LocalDate data = receita.getData();
-        receitaExiste(receita.getId());
 
         repository.findByDescricao(receita.getDescricao()).forEach(r -> {
             if (r.getData().getMonthValue() == data.getMonthValue() && r.getData().getYear() == data.getYear()) {

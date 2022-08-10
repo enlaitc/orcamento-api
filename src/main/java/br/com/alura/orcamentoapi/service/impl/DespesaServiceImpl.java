@@ -1,5 +1,6 @@
 package br.com.alura.orcamentoapi.service.impl;
 
+import br.com.alura.orcamentoapi.model.CategoriaDespesa;
 import br.com.alura.orcamentoapi.model.Despesa;
 import br.com.alura.orcamentoapi.model.Receita;
 import br.com.alura.orcamentoapi.repository.DespesaRepository;
@@ -25,7 +26,7 @@ public class DespesaServiceImpl implements DespesaService {
     @Override
     public Despesa adicionaDespesa(Despesa despesa) {
         LocalDate data = despesa.getData();
-        despesaExiste(despesa.getId());
+        if(despesa.getCategoria() == null) despesa.setCategoria(CategoriaDespesa.OUTRAS);
 
         repository.findByDescricao(despesa.getDescricao()).forEach(d -> {
             if (d.getData().getMonthValue() == data.getMonthValue() && d.getData().getYear() == data.getYear()) {
@@ -42,7 +43,7 @@ public class DespesaServiceImpl implements DespesaService {
     }
 
     @Override
-    public Despesa buscaDespesa(Long despesaId) {
+    public Despesa buscaDespesaPorId(Long despesaId) {
         despesaExiste(despesaId);
 
         return repository.findById(despesaId).get();

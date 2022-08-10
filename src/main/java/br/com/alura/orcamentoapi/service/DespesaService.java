@@ -9,7 +9,7 @@ public interface DespesaService {
 
     Despesa adicionaDespesa(Despesa despesa);
     List<Despesa> buscaTodasDespesas();
-    Despesa buscaDespesa(Long despesaId);
+    Despesa buscaDespesaPorId(Long despesaId);
     ResponseEntity<Despesa> atualizaDespesa(Long despesaId, Despesa despesaUp);
     ResponseEntity<Void> deletaDespesa(Long despesaId);
 }

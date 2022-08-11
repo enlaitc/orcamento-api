@@ -47,4 +47,9 @@ public class ReceitaController {
         return service.deletaReceita(receitaId);
     }
 
+    @GetMapping("/{ano}/{mes}")
+    public List<Receita> buscaTodasReceitasPorMes(@PathVariable int ano, @PathVariable int mes){
+        return service.buscaTodasReceitasPorMes(ano, mes);
+    }
+
 }

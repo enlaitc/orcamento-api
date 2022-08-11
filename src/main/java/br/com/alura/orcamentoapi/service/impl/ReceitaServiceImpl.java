@@ -48,6 +48,16 @@ public class ReceitaServiceImpl implements ReceitaService {
         return repository.findByDescricao(receitaDesc);
     }
 
+    @Override
+    public List<Receita> buscaTodasReceitasPorMes(int ano, int mes) {
+        int diaFin = LocalDate.of(ano, mes, 1).lengthOfMonth();
+
+        return repository.findByDataBetween(
+                LocalDate.of(ano, mes,1)
+                ,LocalDate.of(ano, mes,diaFin));
+
+    }
+
     @Transactional
     @Override
     public ResponseEntity<Receita> atualizaReceita(Long receitaId, Receita receitaUp) {

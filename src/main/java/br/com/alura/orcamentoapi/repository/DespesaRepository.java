@@ -12,5 +12,5 @@ import java.util.List;
 public interface DespesaRepository extends JpaRepository<Despesa, Long> {
 
     List<Despesa> findByDescricao(String descricao);
-    List<Despesa> findByData(LocalDate data);
+    List<Despesa> findByDataBetween(LocalDate dataIni, LocalDate dataFin);
 }

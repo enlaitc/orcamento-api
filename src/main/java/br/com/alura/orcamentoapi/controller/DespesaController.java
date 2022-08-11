@@ -47,4 +47,9 @@ public class DespesaController {
         return service.deletaDespesa(despesaId);
     }
 
+    @GetMapping("/{ano}/{mes}")
+    public List<Despesa> buscaTodasDespesasPorMes(@PathVariable int ano, @PathVariable int mes){
+        return service.buscaTodasDespesasPorMes(ano, mes);
+    }
+
 }

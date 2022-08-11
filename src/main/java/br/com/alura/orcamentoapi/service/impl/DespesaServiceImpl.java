@@ -2,11 +2,8 @@ package br.com.alura.orcamentoapi.service.impl;
 
 import br.com.alura.orcamentoapi.model.CategoriaDespesa;
 import br.com.alura.orcamentoapi.model.Despesa;
-import br.com.alura.orcamentoapi.model.Receita;
 import br.com.alura.orcamentoapi.repository.DespesaRepository;
-import br.com.alura.orcamentoapi.repository.ReceitaRepository;
 import br.com.alura.orcamentoapi.service.DespesaService;
-import br.com.alura.orcamentoapi.service.ReceitaService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -14,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -52,6 +48,15 @@ public class DespesaServiceImpl implements DespesaService {
     @Override
     public List<Despesa> buscaDespesaPorDesc(String despesaDesc) {
        return repository.findByDescricao(despesaDesc);
+    }
+
+    @Override
+    public List<Despesa> buscaTodasDespesasPorMes(int ano, int mes) {
+        int diaFin = LocalDate.of(ano, mes, 1).lengthOfMonth();
+
+        return repository.findByDataBetween(
+                LocalDate.of(ano, mes,1)
+                ,LocalDate.of(ano, mes,diaFin));
     }
 
     @Transactional

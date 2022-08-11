@@ -11,6 +11,7 @@ public interface DespesaService {
     List<Despesa> buscaTodasDespesas();
     Despesa buscaDespesaPorId(Long despesaId);
     List<Despesa> buscaDespesaPorDesc(String despesaDesc);
+    List<Despesa> buscaTodasDespesasPorMes(int ano, int mes);
     ResponseEntity<Despesa> atualizaDespesa(Long despesaId, Despesa despesaUp);
     ResponseEntity<Void> deletaDespesa(Long despesaId);
 }

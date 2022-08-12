@@ -1,5 +1,6 @@
 package br.com.alura.orcamentoapi.repository;
 
+import br.com.alura.orcamentoapi.model.CategoriaDespesa;
 import br.com.alura.orcamentoapi.model.Despesa;
 import br.com.alura.orcamentoapi.model.Receita;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,4 +14,6 @@ public interface DespesaRepository extends JpaRepository<Despesa, Long> {
 
     List<Despesa> findByDescricao(String descricao);
     List<Despesa> findByDataBetween(LocalDate dataIni, LocalDate dataFin);
+    List<Despesa> findByCategoriaAndDataBetween(CategoriaDespesa categoria,LocalDate dataIni, LocalDate dataFin);
+    List<Despesa> findByCategoria(CategoriaDespesa categoria);
 }

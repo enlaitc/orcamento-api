@@ -82,4 +82,20 @@ public class DespesaServiceImpl implements DespesaService {
         if (!repository.existsById(despedaId)) throw new RuntimeException("Despesa não existe.");
     }
 
+    public Float valorPorCategoria(CategoriaDespesa categoria,int ano, int mes){
+        int diaFin = LocalDate.of(ano, mes, 1).lengthOfMonth();
+        Float soma = 0.0F;
+
+        List<Despesa> despesas = repository.findByCategoriaAndDataBetween(
+                categoria,
+                LocalDate.of(ano, mes,1),
+                LocalDate.of(ano, mes,diaFin));
+
+        for (Despesa d:despesas) {
+            soma +=d.getValor();
+        }
+
+        return soma;
+    }
+
 }

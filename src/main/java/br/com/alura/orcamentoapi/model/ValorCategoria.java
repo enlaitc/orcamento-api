@@ -2,16 +2,19 @@ package br.com.alura.orcamentoapi.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 
-@Getter
-@Setter
-public class ValorCategoria {
+public interface ValorCategoria {
 
-    private CategoriaDespesa categoria;
-    private Float valor;
+//    private CategoriaDespesa categoria;
+//    private Float valor;
+//
+//    public ValorCategoria(CategoriaDespesa categoria, Float valor){
+//        this.categoria = categoria;
+//        this.valor = valor;
+//    }
 
-    public ValorCategoria(CategoriaDespesa categoria, Float valor){
-        this.categoria = categoria;
-        this.valor = valor;
-    }
+    @Value("#{target.categoria.descricao}")
+    String getCategoria();
+    Float getTotal();
 }

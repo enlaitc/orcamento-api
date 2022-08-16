@@ -2,6 +2,7 @@ package br.com.alura.orcamentoapi.service.impl;
 
 import br.com.alura.orcamentoapi.model.CategoriaDespesa;
 import br.com.alura.orcamentoapi.model.Despesa;
+import br.com.alura.orcamentoapi.model.ValorCategoria;
 import br.com.alura.orcamentoapi.repository.DespesaRepository;
 import br.com.alura.orcamentoapi.service.DespesaService;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -22,7 +24,7 @@ public class DespesaServiceImpl implements DespesaService {
     @Override
     public Despesa adicionaDespesa(Despesa despesa) {
         LocalDate data = despesa.getData();
-        if(despesa.getCategoria() == null) despesa.setCategoria(CategoriaDespesa.OUTRAS);
+        if (despesa.getCategoria() == null) despesa.setCategoria(CategoriaDespesa.OUTRAS);
 
         repository.findByDescricao(despesa.getDescricao()).forEach(d -> {
             if (d.getData().getMonthValue() == data.getMonthValue() && d.getData().getYear() == data.getYear()) {
@@ -47,7 +49,7 @@ public class DespesaServiceImpl implements DespesaService {
 
     @Override
     public List<Despesa> buscaDespesaPorDesc(String despesaDesc) {
-       return repository.findByDescricao(despesaDesc);
+        return repository.findByDescricao(despesaDesc);
     }
 
     @Override
@@ -55,8 +57,8 @@ public class DespesaServiceImpl implements DespesaService {
         int diaFin = LocalDate.of(ano, mes, 1).lengthOfMonth();
 
         return repository.findByDataBetween(
-                LocalDate.of(ano, mes,1)
-                ,LocalDate.of(ano, mes,diaFin));
+                LocalDate.of(ano, mes, 1)
+                , LocalDate.of(ano, mes, diaFin));
     }
 
     @Transactional
@@ -78,24 +80,26 @@ public class DespesaServiceImpl implements DespesaService {
         return ResponseEntity.noContent().build();
     }
 
-    public void despesaExiste(Long despedaId) {
-        if (!repository.existsById(despedaId)) throw new RuntimeException("Despesa não existe.");
+    public List<ValorCategoria> buscaValorTotalPorCategoria(int ano, int mes) {
+        int diaFin = LocalDate.of(ano, mes, 1).lengthOfMonth();
+
+        return repository.buscaValorTotalPorCategoria(
+                LocalDate.of(ano, mes, 1)
+                , LocalDate.of(ano, mes, diaFin)
+        );
     }
 
-    public Float valorPorCategoria(CategoriaDespesa categoria,int ano, int mes){
+    public BigDecimal somaTodasDespesasPorData(int ano, int mes) {
         int diaFin = LocalDate.of(ano, mes, 1).lengthOfMonth();
-        Float soma = 0.0F;
 
-        List<Despesa> despesas = repository.findByCategoriaAndDataBetween(
-                categoria,
-                LocalDate.of(ano, mes,1),
-                LocalDate.of(ano, mes,diaFin));
+        return repository.somaTodasDespesasPorData(
+                LocalDate.of(ano, mes, 1)
+                , LocalDate.of(ano, mes, diaFin)
+        );
+    }
 
-        for (Despesa d:despesas) {
-            soma +=d.getValor();
-        }
-
-        return soma;
+    public void despesaExiste(Long despedaId) {
+        if (!repository.existsById(despedaId)) throw new RuntimeException("Despesa não existe.");
     }
 
 }

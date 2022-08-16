@@ -1,8 +1,6 @@
 package br.com.alura.orcamentoapi.controller;
 
 import br.com.alura.orcamentoapi.model.Resumo;
-import br.com.alura.orcamentoapi.service.DespesaService;
-import br.com.alura.orcamentoapi.service.ReceitaService;
 import br.com.alura.orcamentoapi.service.ResumoService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -6,6 +6,7 @@ import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -23,7 +24,7 @@ public class Despesa {
     @NotBlank
     private String descricao;
 
-    private Float valor;
+    private BigDecimal valor;
 
     private LocalDate data;
 

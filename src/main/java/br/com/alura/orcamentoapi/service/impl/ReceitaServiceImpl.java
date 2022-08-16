@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -75,6 +76,15 @@ public class ReceitaServiceImpl implements ReceitaService {
         repository.deleteById(receitaId);
 
         return ResponseEntity.noContent().build();
+    }
+
+    public BigDecimal somaTodasReceitasPorData(int ano, int mes) {
+        int diaFin = LocalDate.of(ano, mes, 1).lengthOfMonth();
+
+        return repository.somaTodasReceitasPorData(
+                LocalDate.of(ano, mes, 1)
+                , LocalDate.of(ano, mes, diaFin)
+        );
     }
 
     public void receitaExiste(Long receitaId) {

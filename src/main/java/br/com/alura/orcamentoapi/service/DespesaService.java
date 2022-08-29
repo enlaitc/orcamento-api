@@ -1,9 +1,7 @@
 package br.com.alura.orcamentoapi.service;
 
-import br.com.alura.orcamentoapi.model.CategoriaDespesa;
 import br.com.alura.orcamentoapi.model.Despesa;
 import br.com.alura.orcamentoapi.model.ValorCategoria;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;

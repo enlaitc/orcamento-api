@@ -1,6 +1,8 @@
 package br.com.alura.orcamentoapi.service;
 
 import br.com.alura.orcamentoapi.model.Receita;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
@@ -10,7 +12,7 @@ public interface ReceitaService {
 
     Receita adicionaReceita(Receita receita);
 
-    List<Receita> buscaTodasReceitas();
+    Page<Receita> buscaTodasReceitas(Pageable pageable);
 
     Receita buscaReceitaPorId(Long receitaId);
 

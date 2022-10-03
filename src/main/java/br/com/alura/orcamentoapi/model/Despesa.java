@@ -1,8 +1,10 @@
 package br.com.alura.orcamentoapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.Hibernate;
+import org.springframework.data.domain.Page;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -16,6 +18,7 @@ import java.util.Objects;
 @Entity
 public class Despesa {
 
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_despesa")
@@ -43,4 +46,5 @@ public class Despesa {
     public int hashCode() {
         return getClass().hashCode();
     }
+
 }

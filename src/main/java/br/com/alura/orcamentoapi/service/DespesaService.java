@@ -2,6 +2,8 @@ package br.com.alura.orcamentoapi.service;
 
 import br.com.alura.orcamentoapi.model.Despesa;
 import br.com.alura.orcamentoapi.model.ValorCategoria;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
@@ -11,7 +13,7 @@ public interface DespesaService {
 
     Despesa adicionaDespesa(Despesa despesa);
 
-    List<Despesa> buscaTodasDespesas();
+    Page<Despesa> buscaTodasDespesas(Pageable pageable);
 
     Despesa buscaDespesaPorId(Long despesaId);
 

@@ -3,6 +3,8 @@ package br.com.alura.orcamentoapi.controller;
 import br.com.alura.orcamentoapi.model.DTO.TokenDto;
 import br.com.alura.orcamentoapi.model.FORM.LoginForm;
 import br.com.alura.orcamentoapi.service.TokenService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+@Tag(name = "Authentication")
 @RestController
 @RequestMapping("/auth")
 public class AutenticacaoController {
@@ -25,6 +28,7 @@ public class AutenticacaoController {
     @Autowired
     private TokenService tokenService;
 
+    @Operation(summary = "Autenticação")
     @PostMapping
     public ResponseEntity<TokenDto> autenticar(@RequestBody @Valid LoginForm form){
         UsernamePasswordAuthenticationToken dadosLogin = form.converter();

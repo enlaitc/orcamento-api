@@ -4,6 +4,8 @@ import br.com.alura.orcamentoapi.model.Receita;
 import br.com.alura.orcamentoapi.repository.ReceitaRepository;
 import br.com.alura.orcamentoapi.service.ReceitaService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +35,8 @@ public class ReceitaServiceImpl implements ReceitaService {
     }
 
     @Override
-    public List<Receita> buscaTodasReceitas() {
-        return repository.findAll();
+    public Page<Receita> buscaTodasReceitas(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
     @Override

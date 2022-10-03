@@ -5,10 +5,16 @@ import br.com.alura.orcamentoapi.model.Despesa;
 import br.com.alura.orcamentoapi.model.ValorCategoria;
 import br.com.alura.orcamentoapi.repository.DespesaRepository;
 import br.com.alura.orcamentoapi.service.DespesaService;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
+import org.springdoc.api.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -36,8 +42,8 @@ public class DespesaServiceImpl implements DespesaService {
     }
 
     @Override
-    public List<Despesa> buscaTodasDespesas() {
-        return repository.findAll();
+    public Page<Despesa> buscaTodasDespesas(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
     @Override

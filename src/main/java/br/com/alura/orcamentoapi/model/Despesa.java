@@ -1,5 +1,6 @@
 package br.com.alura.orcamentoapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.Hibernate;
@@ -16,6 +17,7 @@ import java.util.Objects;
 @Entity
 public class Despesa {
 
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_despesa")

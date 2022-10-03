@@ -2,6 +2,7 @@ package br.com.alura.orcamentoapi.controller;
 
 import br.com.alura.orcamentoapi.model.Receita;
 import br.com.alura.orcamentoapi.service.ReceitaService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@SecurityRequirement(name = "BearerJWT")
 @AllArgsConstructor
 @RestController
 @RequestMapping("/receitas")

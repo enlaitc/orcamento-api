@@ -1,8 +1,6 @@
 package br.com.alura.orcamentoapi.security;
 
 import br.com.alura.orcamentoapi.repository.UsuarioRepository;
-import br.com.alura.orcamentoapi.service.AutenticacaoService;
-import br.com.alura.orcamentoapi.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

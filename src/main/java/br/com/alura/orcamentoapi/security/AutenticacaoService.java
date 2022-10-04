@@ -1,4 +1,4 @@
-package br.com.alura.orcamentoapi.service;
+package br.com.alura.orcamentoapi.security;
 
 import br.com.alura.orcamentoapi.model.Usuario;
 import br.com.alura.orcamentoapi.repository.UsuarioRepository;

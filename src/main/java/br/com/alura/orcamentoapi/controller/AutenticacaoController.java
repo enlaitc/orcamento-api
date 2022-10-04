@@ -2,7 +2,7 @@ package br.com.alura.orcamentoapi.controller;
 
 import br.com.alura.orcamentoapi.model.DTO.TokenDto;
 import br.com.alura.orcamentoapi.model.FORM.LoginForm;
-import br.com.alura.orcamentoapi.service.TokenService;
+import br.com.alura.orcamentoapi.security.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;

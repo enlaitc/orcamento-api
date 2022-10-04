@@ -95,7 +95,8 @@ public class ReceitaServiceImpl implements ReceitaService {
     }
 
     public void receitaExiste(Long receitaId) {
-        if (!repository.existsById(receitaId)) throw new IdNotFoundException("Receita com o id: " + receitaId + " não existe.");
+        repository.findById(receitaId)
+                .orElseThrow(() -> new IdNotFoundException("Receita não encontrada"));
     }
 
 }

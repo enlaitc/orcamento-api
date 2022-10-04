@@ -106,9 +106,8 @@ public class DespesaServiceImpl implements DespesaService {
     }
 
     public void despesaExiste(Long despesaId) {
-        if (!repository.existsById(despesaId)) {
-            throw new IdNotFoundException("Despesa com o id: " + despesaId + " não existe.");
-        }
+        repository.findById(despesaId)
+                .orElseThrow(() -> new IdNotFoundException("Despesa não encontrada"));
     }
 
 }

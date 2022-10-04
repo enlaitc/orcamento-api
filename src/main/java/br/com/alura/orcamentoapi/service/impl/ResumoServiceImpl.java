@@ -6,6 +6,7 @@ import br.com.alura.orcamentoapi.service.DespesaService;
 import br.com.alura.orcamentoapi.service.ReceitaService;
 import br.com.alura.orcamentoapi.service.ResumoService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -15,21 +16,29 @@ import java.util.List;
 @Service
 public class ResumoServiceImpl implements ResumoService {
 
-    public ReceitaService receitaService;
-    public DespesaService despesaService;
+    final ReceitaService receitaService;
+    final DespesaService despesaService;
 
     @Override
-    public Resumo resumoMes(int ano, int mes) {
-        BigDecimal vTotalDespesa = despesaService.somaTodasDespesasPorData(ano, mes);
-        BigDecimal vTotalReceita = receitaService.somaTodasReceitasPorData(ano, mes);
-        List<ValorCategoria> valorCategorias = despesaService.buscaValorTotalPorCategoria(ano, mes);
+    public ResponseEntity<Resumo> resumoMes(int ano, int mes) {
+        try{
+            BigDecimal vTotalDespesa = despesaService.somaTodasDespesasPorData(ano, mes);
+            BigDecimal vTotalReceita = receitaService.somaTodasReceitasPorData(ano, mes);
+            List<ValorCategoria> valorCategorias = despesaService.buscaValorTotalPorCategoria(ano, mes);
 
-        return new Resumo(
-                vTotalReceita,
-                vTotalDespesa,
-                (vTotalReceita.subtract(vTotalDespesa)),
-                valorCategorias
+            Resumo resumo = new Resumo(
+                    vTotalReceita,
+                    vTotalDespesa,
+                    (vTotalReceita.subtract(vTotalDespesa)),
+                    valorCategorias
 
-        );
+            );
+
+            return ResponseEntity.ok(resumo);
+        } catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
+
     }
 }

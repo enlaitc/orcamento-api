@@ -1,5 +1,6 @@
 package br.com.alura.orcamentoapi.service.impl;
 
+import br.com.alura.orcamentoapi.exception.IdNotFoundException;
 import br.com.alura.orcamentoapi.model.Receita;
 import br.com.alura.orcamentoapi.repository.ReceitaRepository;
 import br.com.alura.orcamentoapi.service.ReceitaService;
@@ -83,14 +84,18 @@ public class ReceitaServiceImpl implements ReceitaService {
     public BigDecimal somaTodasReceitasPorData(int ano, int mes) {
         int diaFin = LocalDate.of(ano, mes, 1).lengthOfMonth();
 
-        return repository.somaTodasReceitasPorData(
+        BigDecimal soma = repository.somaTodasReceitasPorData(
                 LocalDate.of(ano, mes, 1)
                 , LocalDate.of(ano, mes, diaFin)
         );
+
+        if(soma != null) return soma;
+
+        return new BigDecimal(0);
     }
 
     public void receitaExiste(Long receitaId) {
-        if (!repository.existsById(receitaId)) throw new RuntimeException("Receita não existe.");
+        if (!repository.existsById(receitaId)) throw new IdNotFoundException("Receita com o id: " + receitaId + " não existe.");
     }
 
 }

@@ -21,24 +21,20 @@ public class ResumoServiceImpl implements ResumoService {
 
     @Override
     public ResponseEntity<Resumo> resumoMes(int ano, int mes) {
-        try{
-            BigDecimal vTotalDespesa = despesaService.somaTodasDespesasPorData(ano, mes);
-            BigDecimal vTotalReceita = receitaService.somaTodasReceitasPorData(ano, mes);
-            List<ValorCategoria> valorCategorias = despesaService.buscaValorTotalPorCategoria(ano, mes);
 
-            Resumo resumo = new Resumo(
-                    vTotalReceita,
-                    vTotalDespesa,
-                    (vTotalReceita.subtract(vTotalDespesa)),
-                    valorCategorias
+        BigDecimal vTotalDespesa = despesaService.somaTodasDespesasPorData(ano, mes);
+        BigDecimal vTotalReceita = receitaService.somaTodasReceitasPorData(ano, mes);
+        List<ValorCategoria> valorCategorias = despesaService.buscaValorTotalPorCategoria(ano, mes);
 
-            );
+        Resumo resumo = new Resumo(
+                vTotalReceita,
+                vTotalDespesa,
+                (vTotalReceita.subtract(vTotalDespesa)),
+                valorCategorias
 
-            return ResponseEntity.ok(resumo);
-        } catch (Exception e){
-            e.printStackTrace();
-            return ResponseEntity.badRequest().build();
-        }
+        );
+
+        return ResponseEntity.ok(resumo);
 
     }
 }

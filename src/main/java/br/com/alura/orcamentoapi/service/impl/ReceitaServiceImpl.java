@@ -1,6 +1,5 @@
 package br.com.alura.orcamentoapi.service.impl;
 
-import br.com.alura.orcamentoapi.exception.IdNotFoundException;
 import br.com.alura.orcamentoapi.model.Receita;
 import br.com.alura.orcamentoapi.repository.ReceitaRepository;
 import br.com.alura.orcamentoapi.service.ReceitaService;
@@ -11,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -96,7 +96,7 @@ public class ReceitaServiceImpl implements ReceitaService {
 
     public void receitaExiste(Long receitaId) {
         repository.findById(receitaId)
-                .orElseThrow(() -> new IdNotFoundException("Receita não encontrada"));
+                .orElseThrow(() -> new EntityNotFoundException("Receita não encontrada"));
     }
 
 }

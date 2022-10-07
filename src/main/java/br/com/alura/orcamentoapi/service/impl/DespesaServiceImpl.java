@@ -1,6 +1,5 @@
 package br.com.alura.orcamentoapi.service.impl;
 
-import br.com.alura.orcamentoapi.exception.IdNotFoundException;
 import br.com.alura.orcamentoapi.model.CategoriaDespesa;
 import br.com.alura.orcamentoapi.model.Despesa;
 import br.com.alura.orcamentoapi.model.ValorCategoria;
@@ -13,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -107,7 +107,7 @@ public class DespesaServiceImpl implements DespesaService {
 
     public void despesaExiste(Long despesaId) {
         repository.findById(despesaId)
-                .orElseThrow(() -> new IdNotFoundException("Despesa não encontrada"));
+                .orElseThrow(() -> new EntityNotFoundException("Despesa não encontrada"));
     }
 
 }

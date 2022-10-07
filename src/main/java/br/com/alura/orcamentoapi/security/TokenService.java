@@ -1,5 +1,6 @@
 package br.com.alura.orcamentoapi.security;
 
+import br.com.alura.orcamentoapi.exception.InvalidTokenException;
 import br.com.alura.orcamentoapi.model.Usuario;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -40,7 +41,7 @@ public class TokenService {
             Jwts.parser().setSigningKey(this.secret).parseClaimsJws(token);
             return true;
         } catch (Exception e) {
-            return false;
+            throw new InvalidTokenException("Auth Failed");
         }
 
     }

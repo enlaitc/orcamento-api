@@ -6,6 +6,7 @@ import br.com.alura.orcamentoapi.security.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +22,7 @@ import javax.validation.Valid;
 @Tag(name = "Authentication")
 @RestController
 @RequestMapping("/auth")
+@Profile(value = {"prod","test"})
 public class AutenticacaoController {
 
     @Autowired

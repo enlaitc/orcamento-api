@@ -1,7 +1,6 @@
 package br.com.alura.orcamentoapi.Repository;
 
 import br.com.alura.orcamentoapi.model.Usuario;
-import br.com.alura.orcamentoapi.repository.DespesaRepository;
 import br.com.alura.orcamentoapi.repository.UsuarioRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -25,5 +24,13 @@ public class UsuarioRepositoryTest {
 
         Assertions.assertNotNull(usuario);
         Assertions.assertEquals(email, usuario.get().getEmail());
+    }
+
+    @Test
+    public void naoDeveriaRetornarUsuarioPorEmail(){
+        String email = "invalido@email.com";
+        Optional<Usuario> usuario = repository.findByEmail(email);
+
+        Assertions.assertEquals(Optional.empty(),usuario);
     }
 }

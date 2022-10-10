@@ -1,0 +1,35 @@
+version: '3.1'
+
+services:
+
+  app:
+    build:
+      context: .
+    container_name: orcapp
+    depends_on:
+      - db
+    environment:
+      - TZ=America/Sao_Paulo
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/orcamentodb
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_PROFILES_ACTIVE=prod
+    ports:
+      - "8080:8080"
+
+  db:
+    container_name: pg_container
+    image: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    restart: always
+    environment:
+      TZ: "America/Sao_Paulo"
+      POSTGRES_DB: orcamentodb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "33333:5432"
+
+volumes:
+  db-data:

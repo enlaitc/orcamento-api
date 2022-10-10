@@ -2,7 +2,6 @@ package br.com.alura.orcamentoapi.security;
 
 import br.com.alura.orcamentoapi.model.Usuario;
 import br.com.alura.orcamentoapi.repository.UsuarioRepository;
-import br.com.alura.orcamentoapi.service.TokenService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;

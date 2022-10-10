@@ -5,17 +5,14 @@ import br.com.alura.orcamentoapi.model.Despesa;
 import br.com.alura.orcamentoapi.model.ValorCategoria;
 import br.com.alura.orcamentoapi.repository.DespesaRepository;
 import br.com.alura.orcamentoapi.service.DespesaService;
-import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
-import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -98,14 +95,19 @@ public class DespesaServiceImpl implements DespesaService {
     public BigDecimal somaTodasDespesasPorData(int ano, int mes) {
         int diaFin = LocalDate.of(ano, mes, 1).lengthOfMonth();
 
-        return repository.somaTodasDespesasPorData(
+        BigDecimal soma =  repository.somaTodasDespesasPorData(
                 LocalDate.of(ano, mes, 1)
                 , LocalDate.of(ano, mes, diaFin)
         );
+
+        if(soma != null) return soma;
+
+        return new BigDecimal(0);
     }
 
-    public void despesaExiste(Long despedaId) {
-        if (!repository.existsById(despedaId)) throw new RuntimeException("Despesa não existe.");
+    public void despesaExiste(Long despesaId) {
+        repository.findById(despesaId)
+                .orElseThrow(() -> new EntityNotFoundException("Despesa não encontrada"));
     }
 
 }

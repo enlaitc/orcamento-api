@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -83,14 +84,19 @@ public class ReceitaServiceImpl implements ReceitaService {
     public BigDecimal somaTodasReceitasPorData(int ano, int mes) {
         int diaFin = LocalDate.of(ano, mes, 1).lengthOfMonth();
 
-        return repository.somaTodasReceitasPorData(
+        BigDecimal soma = repository.somaTodasReceitasPorData(
                 LocalDate.of(ano, mes, 1)
                 , LocalDate.of(ano, mes, diaFin)
         );
+
+        if(soma != null) return soma;
+
+        return new BigDecimal(0);
     }
 
     public void receitaExiste(Long receitaId) {
-        if (!repository.existsById(receitaId)) throw new RuntimeException("Receita não existe.");
+        repository.findById(receitaId)
+                .orElseThrow(() -> new EntityNotFoundException("Receita não encontrada"));
     }
 
 }

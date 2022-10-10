@@ -45,7 +45,7 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.3.3</version>
+			<version>42.5.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -65,9 +65,16 @@
 			<artifactId>springdoc-openapi-ui</artifactId>
 			<version>1.6.11</version>
 		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>5.7.0</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
+		<finalName>orcamentoapi</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

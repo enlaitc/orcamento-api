@@ -1,10 +1,12 @@
 package br.com.alura.orcamentoapi.service.impl;
 
-import br.com.alura.orcamentoapi.model.CategoriaDespesa;
 import br.com.alura.orcamentoapi.model.Despesa;
+import br.com.alura.orcamentoapi.model.FORM.RequestSaveDespesa;
+import br.com.alura.orcamentoapi.model.Usuario;
 import br.com.alura.orcamentoapi.model.ValorCategoria;
 import br.com.alura.orcamentoapi.repository.DespesaRepository;
 import br.com.alura.orcamentoapi.service.DespesaService;
+import br.com.alura.orcamentoapi.service.UsuarioService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,20 +24,28 @@ import java.util.List;
 public class DespesaServiceImpl implements DespesaService {
 
     private DespesaRepository repository;
+    private UsuarioService usuarioService;
 
     @Transactional
     @Override
-    public Despesa adicionaDespesa(Despesa despesa) {
-        LocalDate data = despesa.getData();
-        if (despesa.getCategoria() == null) despesa.setCategoria(CategoriaDespesa.OUTRAS);
+    public RequestSaveDespesa adicionaDespesa(RequestSaveDespesa despesa) {
+        verificaSeExisteAMesmaDescricaoNoMesEAno(despesa.getDescricao(), despesa.getData());
 
-        repository.findByDescricao(despesa.getDescricao()).forEach(d -> {
-            if (d.getData().getMonthValue() == data.getMonthValue() && d.getData().getYear() == data.getYear()) {
-                throw new RuntimeException("Mes e data repetidos.");
-            }
-        });
+        Usuario usuario = usuarioService.buscaUsuarioPorId(despesa.getUsuario().getId(), despesa.getUsuario().getNome());
+        Long id = despesa.getId() == 0 ? null : despesa.getId();
 
-        return repository.save(despesa);
+        Despesa parseDespesa = new Despesa(
+                id,
+                despesa.getDescricao(),
+                despesa.getValor(),
+                despesa.getData(),
+                despesa.getCategoria(),
+                usuario
+        );
+        despesa.setId(repository.save(parseDespesa).getId());
+
+        return despesa;
+
     }
 
     @Override
@@ -66,7 +76,7 @@ public class DespesaServiceImpl implements DespesaService {
 
     @Transactional
     @Override
-    public ResponseEntity<Despesa> atualizaDespesa(Long despesaId, Despesa despesaUp) {
+    public ResponseEntity<RequestSaveDespesa> atualizaDespesa(Long despesaId, RequestSaveDespesa despesaUp) {
         despesaExiste(despesaId);
 
         despesaUp.setId(despesaId);
@@ -108,6 +118,14 @@ public class DespesaServiceImpl implements DespesaService {
     public void despesaExiste(Long despesaId) {
         repository.findById(despesaId)
                 .orElseThrow(() -> new EntityNotFoundException("Despesa não encontrada"));
+    }
+
+    private void verificaSeExisteAMesmaDescricaoNoMesEAno(String descricao, LocalDate data){
+        repository.findByDescricao(descricao).forEach(d -> {
+            if (d.getData().getMonthValue() == data.getMonthValue() && d.getData().getYear() == data.getYear()) {
+                throw new RuntimeException("Mes e data repetidos.");
+            }
+        });
     }
 
 }

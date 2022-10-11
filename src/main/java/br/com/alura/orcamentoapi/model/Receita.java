@@ -28,6 +28,9 @@ public class Receita {
 
     private LocalDate data;
 
+    @ManyToOne
+    private Usuario user;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -1,6 +1,7 @@
 package br.com.alura.orcamentoapi.service;
 
 import br.com.alura.orcamentoapi.model.Despesa;
+import br.com.alura.orcamentoapi.model.FORM.RequestSaveDespesa;
 import br.com.alura.orcamentoapi.model.ValorCategoria;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,7 +12,7 @@ import java.util.List;
 
 public interface DespesaService {
 
-    Despesa adicionaDespesa(Despesa despesa);
+    RequestSaveDespesa adicionaDespesa(RequestSaveDespesa despesa);
 
     Page<Despesa> buscaTodasDespesas(Pageable pageable);
 
@@ -21,7 +22,7 @@ public interface DespesaService {
 
     List<Despesa> buscaTodasDespesasPorMes(int ano, int mes);
 
-    ResponseEntity<Despesa> atualizaDespesa(Long despesaId, Despesa despesaUp);
+    ResponseEntity<RequestSaveDespesa> atualizaDespesa(Long despesaId, RequestSaveDespesa despesaUp);
 
     ResponseEntity<Void> deletaDespesa(Long despesaId);
 

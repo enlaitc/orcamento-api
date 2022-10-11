@@ -1,6 +1,7 @@
 package br.com.alura.orcamentoapi.controller;
 
 import br.com.alura.orcamentoapi.model.Despesa;
+import br.com.alura.orcamentoapi.model.FORM.RequestSaveDespesa;
 import br.com.alura.orcamentoapi.service.DespesaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -28,7 +29,7 @@ public class DespesaController {
     @Operation(summary = "Adiciona Despesa")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Despesa adicionaDespesa(@RequestBody Despesa despesa){
+    public RequestSaveDespesa adicionaDespesa(@RequestBody RequestSaveDespesa despesa){
         return service.adicionaDespesa(despesa);
     }
 
@@ -52,7 +53,7 @@ public class DespesaController {
 
     @Operation(summary = "Atualiza uma despesa")
     @PutMapping("/{despesaId}")
-    public ResponseEntity<Despesa> atualizaDespesa(@PathVariable Long despesaId, @RequestBody Despesa despesaUp){
+    public ResponseEntity<RequestSaveDespesa> atualizaDespesa(@PathVariable Long despesaId, @RequestBody RequestSaveDespesa despesaUp){
         return service.atualizaDespesa(despesaId,despesaUp);
     }
 

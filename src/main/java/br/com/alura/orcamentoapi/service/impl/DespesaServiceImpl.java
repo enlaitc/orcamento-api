@@ -1,7 +1,7 @@
 package br.com.alura.orcamentoapi.service.impl;
 
 import br.com.alura.orcamentoapi.model.Despesa;
-import br.com.alura.orcamentoapi.model.FORM.RequestSaveDespesa;
+import br.com.alura.orcamentoapi.model.FORM.RequestDespesa;
 import br.com.alura.orcamentoapi.model.Usuario;
 import br.com.alura.orcamentoapi.model.ValorCategoria;
 import br.com.alura.orcamentoapi.repository.DespesaRepository;
@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -28,7 +29,7 @@ public class DespesaServiceImpl implements DespesaService {
 
     @Transactional
     @Override
-    public RequestSaveDespesa adicionaDespesa(RequestSaveDespesa despesa) {
+    public RequestDespesa adicionaDespesa(RequestDespesa despesa) {
         verificaSeExisteAMesmaDescricaoNoMesEAno(despesa.getDescricao(), despesa.getData());
 
         Usuario usuario = usuarioService.buscaUsuarioPorId(despesa.getUsuario().getId(), despesa.getUsuario().getNome());
@@ -49,20 +50,27 @@ public class DespesaServiceImpl implements DespesaService {
     }
 
     @Override
-    public Page<Despesa> buscaTodasDespesas(Pageable pageable) {
-        return repository.findAll(pageable);
+    public Page<RequestDespesa> buscaTodasDespesas(Pageable pageable) {
+        Page<Despesa> despesas = repository.findAll(pageable);
+
+        return despesas.map(RequestDespesa::converter);
     }
 
     @Override
-    public Despesa buscaDespesaPorId(Long despesaId) {
-        despesaExiste(despesaId);
+    public ResponseEntity<RequestDespesa> buscaDespesaPorId(Long despesaId) {
+        Despesa despesa = devolveDespesaSeExistir(despesaId);
 
-        return repository.findById(despesaId).get();
+        return ResponseEntity.ok(RequestDespesa.converter(despesa));
     }
 
     @Override
-    public List<Despesa> buscaDespesaPorDesc(String despesaDesc) {
-        return repository.findByDescricao(despesaDesc);
+    public ResponseEntity<List<RequestDespesa>> buscaDespesaPorDesc(String despesaDesc) {
+        List<Despesa> despesas = repository.findByDescricao(despesaDesc);
+        List<RequestDespesa> lista = new ArrayList<>();
+
+        despesas.forEach(d -> lista.add(RequestDespesa.converter(d)));
+
+        return ResponseEntity.ok(lista);
     }
 
     @Override
@@ -76,8 +84,8 @@ public class DespesaServiceImpl implements DespesaService {
 
     @Transactional
     @Override
-    public ResponseEntity<RequestSaveDespesa> atualizaDespesa(Long despesaId, RequestSaveDespesa despesaUp) {
-        despesaExiste(despesaId);
+    public ResponseEntity<RequestDespesa> atualizaDespesa(Long despesaId, RequestDespesa despesaUp) {
+        devolveDespesaSeExistir(despesaId);
 
         despesaUp.setId(despesaId);
 
@@ -86,7 +94,7 @@ public class DespesaServiceImpl implements DespesaService {
 
     @Override
     public ResponseEntity<Void> deletaDespesa(Long despesaId) {
-        despesaExiste(despesaId);
+        devolveDespesaSeExistir(despesaId);
 
         repository.deleteById(despesaId);
 
@@ -115,8 +123,8 @@ public class DespesaServiceImpl implements DespesaService {
         return new BigDecimal(0);
     }
 
-    public void despesaExiste(Long despesaId) {
-        repository.findById(despesaId)
+    public Despesa devolveDespesaSeExistir(Long despesaId) {
+        return repository.findById(despesaId)
                 .orElseThrow(() -> new EntityNotFoundException("Despesa não encontrada"));
     }
 

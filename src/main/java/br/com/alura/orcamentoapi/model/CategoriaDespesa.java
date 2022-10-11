@@ -2,14 +2,14 @@ package br.com.alura.orcamentoapi.model;
 
 public enum CategoriaDespesa {
 
+    OUTRAS("Outras"),
     ALIMENTAÇÃO("Alimentação"),
     SAÚDE("Saúde"),
     MORADIA("Moradia"),
     TRANSPORTE("Transporte"),
     EDUCAÇÃO("Educacao"),
     LAZER("Lazer"),
-    IMPREVISTOS("Imprevistos"),
-    OUTRAS("Outras");
+    IMPREVISTOS("Imprevistos");
 
     private final String descricao;
 

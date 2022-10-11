@@ -32,7 +32,7 @@ public class Despesa {
     private LocalDate data;
 
     @Enumerated(EnumType.STRING)
-    private CategoriaDespesa categoria = CategoriaDespesa.OUTRAS;
+    private CategoriaDespesa categoria;
 
     @ManyToOne
     private Usuario user;

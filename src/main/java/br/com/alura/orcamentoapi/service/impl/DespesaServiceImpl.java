@@ -50,10 +50,10 @@ public class DespesaServiceImpl implements DespesaService {
     }
 
     @Override
-    public Page<RequestDespesa> buscaTodasDespesas(Pageable pageable) {
+    public ResponseEntity<Page<RequestDespesa>> buscaTodasDespesas(Pageable pageable) {
         Page<Despesa> despesas = repository.findAll(pageable);
 
-        return despesas.map(RequestDespesa::converter);
+        return ResponseEntity.ok(despesas.map(RequestDespesa::converter));
     }
 
     @Override
@@ -74,12 +74,17 @@ public class DespesaServiceImpl implements DespesaService {
     }
 
     @Override
-    public List<Despesa> buscaTodasDespesasPorMes(int ano, int mes) {
+    public ResponseEntity<List<RequestDespesa>> buscaTodasDespesasPorMes(int ano, int mes) {
         int diaFin = LocalDate.of(ano, mes, 1).lengthOfMonth();
 
-        return repository.findByDataBetween(
+        List<Despesa> despesas = repository.findByDataBetween(
                 LocalDate.of(ano, mes, 1)
                 , LocalDate.of(ano, mes, diaFin));
+
+        List<RequestDespesa> lista = new ArrayList<>();
+        despesas.forEach(d -> lista.add(RequestDespesa.converter(d)));
+
+        return ResponseEntity.ok(lista);
     }
 
     @Transactional

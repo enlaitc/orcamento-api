@@ -14,13 +14,13 @@ public interface DespesaService {
 
     RequestDespesa adicionaDespesa(RequestDespesa despesa);
 
-    Page<RequestDespesa> buscaTodasDespesas(Pageable pageable);
+    ResponseEntity<Page<RequestDespesa>> buscaTodasDespesas(Pageable pageable);
 
     ResponseEntity<RequestDespesa> buscaDespesaPorId(Long despesaId);
 
     ResponseEntity<List<RequestDespesa>> buscaDespesaPorDesc(String despesaDesc);
 
-    List<Despesa> buscaTodasDespesasPorMes(int ano, int mes);
+    ResponseEntity<List<RequestDespesa>> buscaTodasDespesasPorMes(int ano, int mes);
 
     ResponseEntity<RequestDespesa> atualizaDespesa(Long despesaId, RequestDespesa despesaUp);
 

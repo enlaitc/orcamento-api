@@ -35,7 +35,7 @@ public class DespesaController {
 
     @Operation(summary = "Busca todas as despesas")
     @GetMapping
-    public Page<RequestDespesa> buscaTodasDespesas(@ParameterObject @PageableDefault(sort = "data") Pageable pageable){
+    public ResponseEntity<Page<RequestDespesa>> buscaTodasDespesas(@ParameterObject @PageableDefault(sort = "data") Pageable pageable){
         return service.buscaTodasDespesas(pageable);
     }
 
@@ -65,7 +65,7 @@ public class DespesaController {
 
     @Operation(summary = "Despesas por ano/mes")
     @GetMapping("/{ano}/{mes}")
-    public List<Despesa> buscaTodasDespesasPorMes(@PathVariable int ano, @PathVariable int mes){
+    public ResponseEntity<List<RequestDespesa>> buscaTodasDespesasPorMes(@PathVariable int ano, @PathVariable int mes){
         return service.buscaTodasDespesasPorMes(ano, mes);
     }
 

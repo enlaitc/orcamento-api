@@ -1,6 +1,8 @@
 package br.com.alura.orcamentoapi.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -10,7 +12,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+@AllArgsConstructor
 @Entity
+@NoArgsConstructor
 public class Usuario implements UserDetails {
 
     @Id
@@ -31,12 +35,12 @@ public class Usuario implements UserDetails {
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
-    private List<Receita> receitas;
+    private List<Receita> receitas = null;
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
-    private List<Despesa> despesas;
+    private List<Despesa> despesas = null;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

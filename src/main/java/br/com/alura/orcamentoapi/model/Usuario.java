@@ -1,5 +1,6 @@
 package br.com.alura.orcamentoapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -26,6 +27,16 @@ public class Usuario implements UserDetails {
             inverseJoinColumns =
             @JoinColumn(name = "perfil_id", referencedColumnName = "id"))
     private List<Perfil> perfis = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private List<Receita> receitas;
+
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private List<Despesa> despesas;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -101,5 +112,29 @@ public class Usuario implements UserDetails {
     @Override
     public int hashCode() {
         return Objects.hash(getId(), getNome(), getEmail(), getSenha());
+    }
+
+    public List<Perfil> getPerfis() {
+        return perfis;
+    }
+
+    public void setPerfis(List<Perfil> perfis) {
+        this.perfis = perfis;
+    }
+
+    public List<Receita> getReceitas() {
+        return receitas;
+    }
+
+    public void setReceitas(List<Receita> receitas) {
+        this.receitas = receitas;
+    }
+
+    public List<Despesa> getDespesas() {
+        return despesas;
+    }
+
+    public void setDespesas(List<Despesa> despesas) {
+        this.despesas = despesas;
     }
 }

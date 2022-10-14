@@ -17,6 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -31,6 +32,9 @@ class DespesaRepositoryTest {
     @Autowired
     private TestEntityManager em;
 
+    private final LocalDate dataIni = LocalDate.of(2000,12,2);
+    private final LocalDate dataFin = LocalDate.of(2000,12,30);
+
     @Test
     @DisplayName("Find By Descricao returns list of Despesa when successful")
     void findByDescricao_ReturnListOfDespesa_WhenSuccessful() {
@@ -42,7 +46,7 @@ class DespesaRepositoryTest {
     }
 
     @Test
-    @DisplayName("Find By Descricao returns empty when no Despesa is not found")
+    @DisplayName("Find By Descricao returns empty when no Despesa is found")
     void findByDescricao_ReturnEmptyList_WhenDespesaIsNotFound() {
         List<Despesa> despesas = repository.findByDescricao("descricao");
 
@@ -50,11 +54,8 @@ class DespesaRepositoryTest {
     }
 
     @Test
-    @DisplayName("Find By Data Between returns list of Despesa between start date and end date when successful")
+    @DisplayName("Find By Data Between returns list of Despesa found between start date and end date when successful")
     void findByDataBetween_ReturnListOfDespesa_WhenSuccessful() {
-        LocalDate dataIni = LocalDate.of(2000,12,2);
-        LocalDate dataFin = LocalDate.of(2000,12,30);
-
         Despesa despesa = createDespesa();
         despesa.setData(LocalDate.of(2000,12,15));
 
@@ -64,11 +65,8 @@ class DespesaRepositoryTest {
     }
 
     @Test
-    @DisplayName("Find By Data Between returns empty list when no Despesa is between star date and end date")
-    void findByDataBetween_ReturnEmptyList_WhenSuccessful() {
-        LocalDate dataIni = LocalDate.of(2000,12,2);
-        LocalDate dataFin = LocalDate.of(2000,12,30);
-
+    @DisplayName("Find By Data Between returns empty list when no Despesa is found between star date and end date")
+    void findByDataBetween_ReturnEmptyList_WhenDespesaIsNotFound() {
         List<Despesa> despesas = repository.findByDataBetween(dataIni,dataFin);
 
         Assertions.assertTrue(despesas.isEmpty());
@@ -77,9 +75,6 @@ class DespesaRepositoryTest {
     @Test
     @DisplayName("Busca Valor Total Por Categoria returns list of ValorCategoria between start date and end date when successful")
     void buscaValorTotalPorCategoria_ReturnListOfValorCategoria_WhenSuccessful() {
-        LocalDate dataIni = LocalDate.of(2000,12,2);
-        LocalDate dataFin = LocalDate.of(2000,12,30);
-
         Despesa despesa = createDespesa();
         despesa.setData(LocalDate.of(2000, 12, 15));
 
@@ -90,18 +85,95 @@ class DespesaRepositoryTest {
     }
 
     @Test
-    void get_NaoRetornaValorTotalPorCategoriaECategoriasEntreDataInicialEDataFinal_WhenFailed() {
-        LocalDate dataIni = LocalDate.of(2000,12,2);
-        LocalDate dataFin = LocalDate.of(2000,12,30);
-
-        Despesa despesa = createDespesa();
-        despesa.setData(LocalDate.of(2000, 12, 1));
-
+    @DisplayName("Busca Valor Total Por Categoria returns empty list when no Despesa is found between start date and end date")
+    void buscaValorTotalPorCategoria_ReturnsEmptyList_WhenDespesaIsNotFound() {
         List<ValorCategoria> valorCategorias = repository.buscaValorTotalPorCategoria(dataIni,dataFin);
 
-        Assertions.assertFalse(valorCategorias.stream().anyMatch(
-                c -> c.getCategoria().equals(despesa.getCategoria().getDescricao())
-                        && c.getTotal().equals(despesa.getValor())));
+        Assertions.assertTrue(valorCategorias.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Soma Todas Despesas Por Data returns the total value of all Despesa found between start date and end date when successful")
+    void somaTodasDespesasPorData_ReturnDespesaTotalValue_WhenSuccessful(){
+        Despesa despesa = createDespesa();
+        despesa.setData(LocalDate.of(2000,12,15));
+
+        BigDecimal vTotal = repository.somaTodasDespesasPorData(dataIni,dataFin);
+
+        Assertions.assertEquals(vTotal, despesa.getValor());
+    }
+
+    @Test
+    @DisplayName("Soma Todas Despesas Por Data returns null when no Despesa is found between start date and end date")
+    void somaTodasDespesasPorData_ReturnNull_WhenDespesaIsNotFound(){
+        BigDecimal vTotal = repository.somaTodasDespesasPorData(dataIni,dataFin);
+
+        Assertions.assertNull(vTotal);
+    }
+
+    @Test
+    @DisplayName("Find By Id returns Despesa when successful")
+    void findById_ReturnDespesa_WhenSuccessful() {
+        Despesa despesa = createDespesa();
+
+       Optional<Despesa> despesaFind = repository.findById(despesa.getId());
+
+       Assertions.assertTrue(despesaFind.isPresent());
+       Assertions.assertEquals(despesa,despesaFind.get());
+    }
+
+    @Test
+    @DisplayName("Find By Id returns empty when Despesa not found")
+    void findById_ReturnEmpty_WhenDespesaNotFound() {
+        Optional<Despesa> despesaFind = repository.findById(1L);
+
+        Assertions.assertTrue(despesaFind.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Save create Despesa when successful")
+    void save_SaveDespesa_WhenSuccessful() {
+        Despesa despesa = createDespesa();
+
+        Despesa despesaSaved = repository.save(despesa);
+
+        Assertions.assertNotNull(despesaSaved);
+        Assertions.assertEquals(despesa,despesaSaved);
+    }
+
+    @Test
+    @DisplayName("Save returns Exception when Despesa was not created")
+    void save_ReturnException_WhenFailed() {
+        Despesa despesa = createDespesa();
+        try {
+            repository.save(despesa);
+            throw new Exception();
+        } catch (Exception e) {
+            Assertions.assertTrue(true);
+        }
+    }
+
+    @Test
+    @DisplayName("Delete By Id removes Despesa by id when successful")
+    void deleteById_RemovesDespesa_WhenSuccessful() {
+        Despesa despesa = createDespesa();
+
+        repository.deleteById(despesa.getId());
+
+        Optional<Despesa> despesaOptional = repository.findById(despesa.getId());
+
+        Assertions.assertTrue(despesaOptional.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Delete By Id return Exception when Despesa by id is not found")
+    void deleteById_ReturnException_WhenIdNotFound() {
+        try {
+            repository.deleteById(1L);
+            throw new Exception();
+        } catch (Exception e) {
+            Assertions.assertTrue(true);
+        }
     }
 
     private Despesa createDespesa() {

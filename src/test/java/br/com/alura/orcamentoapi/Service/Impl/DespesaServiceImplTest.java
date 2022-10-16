@@ -30,6 +30,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -52,7 +53,19 @@ class DespesaServiceImplTest {
     @Test
     @DisplayName("Save create Despesa with RequestDespesa when successful")
     void save_SaveDespesa_WhenSuccessful() {
-        System.out.println("");
+        RequestDespesa rDespesa = criaRequestDespesa();
+        Usuario usuario = createUsuario();
+        Despesa despesa = criaDespesa();
+        despesa.setData(LocalDate.of(1999,12,1));
+
+        Mockito.when(usuarioService.buscaUsuarioPorId(rDespesa.getUsuario().getId(), rDespesa.getUsuario().getNome())).thenReturn(usuario);
+        Mockito.when(repository.findByDescricao(ArgumentMatchers.any())).thenReturn(List.of(despesa));
+        Mockito.when(repository.save(ArgumentMatchers.any())).thenReturn(despesa);
+
+        service.adicionaDespesa(rDespesa);
+
+        Mockito.verify(usuarioService, Mockito.times(1)).buscaUsuarioPorId(rDespesa.getUsuario().getId(),rDespesa.getUsuario().getNome());
+        Mockito.verify(repository, Mockito.times(1)).save(ArgumentMatchers.any());
     }
 
     @Test
@@ -64,7 +77,6 @@ class DespesaServiceImplTest {
     @DisplayName("Busca Despesa Por Id return Despesa when Successful")
     void buscaDespesaPorId_ReturnDespesa_WhenSuccessful() {
         Long despesaId = 99L;
-
         Optional<Despesa> despesaReturn = Optional.of(criaDespesa());
         Mockito.when(repository.findById(despesaId)).thenReturn(despesaReturn);
 

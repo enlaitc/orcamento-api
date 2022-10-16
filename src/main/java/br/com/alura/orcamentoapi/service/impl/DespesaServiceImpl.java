@@ -128,7 +128,7 @@ public class DespesaServiceImpl implements DespesaService {
         return new BigDecimal(0);
     }
 
-    public Despesa devolveDespesaSeExistir(Long despesaId) {
+    private Despesa devolveDespesaSeExistir(Long despesaId) {
         return repository.findById(despesaId)
                 .orElseThrow(() -> new EntityNotFoundException("Despesa não encontrada"));
     }

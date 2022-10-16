@@ -4,11 +4,13 @@ import br.com.alura.orcamentoapi.model.CategoriaDespesa;
 import br.com.alura.orcamentoapi.model.Despesa;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
@@ -19,6 +21,7 @@ public class RequestDespesa {
     private LocalDate data;
     private CategoriaDespesa categoria;
     private ResponseUser usuario;
+
 
     public static RequestDespesa converter(Despesa despesa){
         return new RequestDespesa(

@@ -1,8 +1,11 @@
 package br.com.alura.orcamentoapi.service.impl;
 
+import br.com.alura.orcamentoapi.model.FORM.RequestReceita;
 import br.com.alura.orcamentoapi.model.Receita;
+import br.com.alura.orcamentoapi.model.Usuario;
 import br.com.alura.orcamentoapi.repository.ReceitaRepository;
 import br.com.alura.orcamentoapi.service.ReceitaService;
+import br.com.alura.orcamentoapi.service.UsuarioService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -20,52 +24,70 @@ import java.util.List;
 public class ReceitaServiceImpl implements ReceitaService {
 
     private ReceitaRepository repository;
+    private UsuarioService usuarioService;
 
     @Transactional
     @Override
-    public Receita adicionaReceita(Receita receita) {
-        LocalDate data = receita.getData();
+    public RequestReceita adicionaReceita(RequestReceita receita) {
+        verificaSeExisteAMesmaDescricaoNoMesEAno(receita.getDescricao(), receita.getData());
 
-        repository.findByDescricao(receita.getDescricao()).forEach(r -> {
-            if (r.getData().getMonthValue() == data.getMonthValue() && r.getData().getYear() == data.getYear()) {
-                throw new RuntimeException("Mes e data repetidos.");
-            }
-        });
+        Usuario usuario = usuarioService.buscaUsuarioPorId(receita.getUsuario().getId(), receita.getUsuario().getNome());
+        Long id = receita.getId() == 0 ? null : receita.getId();
 
-        return repository.save(receita);
+        Receita parseDespesa = new Receita(
+                id,
+                receita.getDescricao(),
+                receita.getValor(),
+                receita.getData(),
+                usuario
+        );
+        receita.setId(repository.save(parseDespesa).getId());
+
+        return receita;
     }
 
     @Override
-    public Page<Receita> buscaTodasReceitas(Pageable pageable) {
-        return repository.findAll(pageable);
+    public ResponseEntity<Page<RequestReceita>> buscaTodasReceitas(Pageable pageable) {
+        Page<Receita> despesas = repository.findAll(pageable);
+
+        return ResponseEntity.ok(despesas.map(RequestReceita::converter));
     }
 
     @Override
-    public Receita buscaReceitaPorId(Long receitaId) {
-        receitaExiste(receitaId);
+    public ResponseEntity<RequestReceita> buscaReceitaPorId(Long receitaId) {
+        Receita receita = devolveReceitaSeExistir(receitaId);
 
-        return repository.findById(receitaId).get();
+        return ResponseEntity.ok(RequestReceita.converter(receita));
     }
 
     @Override
-    public List<Receita> buscaReceitaPorDesc(String receitaDesc) {
-        return repository.findByDescricao(receitaDesc);
+    public ResponseEntity<List<RequestReceita>> buscaReceitaPorDesc(String receitaDesc) {
+        List<Receita> receitas = repository.findByDescricao(receitaDesc);
+        List<RequestReceita> lista = new ArrayList<>();
+
+        receitas.forEach(r -> lista.add(RequestReceita.converter(r)));
+
+        return ResponseEntity.ok(lista);
     }
 
     @Override
-    public List<Receita> buscaTodasReceitasPorMes(int ano, int mes) {
+    public ResponseEntity<List<RequestReceita>> buscaTodasReceitasPorMes(int ano, int mes) {
         int diaFin = LocalDate.of(ano, mes, 1).lengthOfMonth();
 
-        return repository.findByDataBetween(
-                LocalDate.of(ano, mes,1)
-                ,LocalDate.of(ano, mes,diaFin));
+        List<Receita> receitas = repository.findByDataBetween(
+                LocalDate.of(ano, mes, 1)
+                , LocalDate.of(ano, mes, diaFin));
 
+        List<RequestReceita> lista = new ArrayList<>();
+        receitas.forEach(r -> lista.add(RequestReceita.converter(r)));
+
+        return ResponseEntity.ok(lista);
     }
 
     @Transactional
     @Override
-    public ResponseEntity<Receita> atualizaReceita(Long receitaId, Receita receitaUp) {
-        receitaExiste(receitaId);
+    public ResponseEntity<RequestReceita> atualizaReceita(Long receitaId, RequestReceita receitaUp) {
+        devolveReceitaSeExistir(receitaId);
 
         receitaUp.setId(receitaId);
 
@@ -74,7 +96,7 @@ public class ReceitaServiceImpl implements ReceitaService {
 
     @Override
     public ResponseEntity<Void> deletaReceita(Long receitaId) {
-        receitaExiste(receitaId);
+        devolveReceitaSeExistir(receitaId);
 
         repository.deleteById(receitaId);
 
@@ -94,9 +116,17 @@ public class ReceitaServiceImpl implements ReceitaService {
         return new BigDecimal(0);
     }
 
-    public void receitaExiste(Long receitaId) {
-        repository.findById(receitaId)
+    private Receita devolveReceitaSeExistir(Long receitaId) {
+        return repository.findById(receitaId)
                 .orElseThrow(() -> new EntityNotFoundException("Receita não encontrada"));
+    }
+
+    private void verificaSeExisteAMesmaDescricaoNoMesEAno(String descricao, LocalDate data){
+        repository.findByDescricao(descricao).forEach(d -> {
+            if (d.getData().getMonthValue() == data.getMonthValue() && d.getData().getYear() == data.getYear()) {
+                throw new RuntimeException("Mes e data repetidos.");
+            }
+        });
     }
 
 }

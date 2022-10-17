@@ -6,7 +6,6 @@ import br.com.alura.orcamentoapi.model.FORM.RequestDespesa;
 import br.com.alura.orcamentoapi.model.FORM.ResponseUser;
 import br.com.alura.orcamentoapi.model.Usuario;
 import br.com.alura.orcamentoapi.repository.DespesaRepository;
-import br.com.alura.orcamentoapi.service.DespesaService;
 import br.com.alura.orcamentoapi.service.UsuarioService;
 import br.com.alura.orcamentoapi.service.impl.DespesaServiceImpl;
 import lombok.extern.log4j.Log4j2;
@@ -14,16 +13,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
-import org.mockito.ArgumentMatchers;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -32,8 +25,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
@@ -53,9 +44,9 @@ class DespesaServiceImplTest {
     @Test
     @DisplayName("Save create Despesa with RequestDespesa when successful")
     void save_SaveDespesa_WhenSuccessful() {
-        RequestDespesa rDespesa = criaRequestDespesa();
+        RequestDespesa rDespesa = createRequestDespesa();
         Usuario usuario = createUsuario();
-        Despesa despesa = criaDespesa();
+        Despesa despesa = createDespesa();
         despesa.setData(LocalDate.of(1999,12,1));
 
         Mockito.when(usuarioService.buscaUsuarioPorId(rDespesa.getUsuario().getId(), rDespesa.getUsuario().getNome())).thenReturn(usuario);
@@ -69,15 +60,25 @@ class DespesaServiceImplTest {
     }
 
     @Test
-    @DisplayName("Busca Despesa Por Id return Despesa when Successful")
-    void buscaTodasDespesas() {
+    @DisplayName("Busca Todas Despesas return all Despesa when Successful")
+    void buscaTodasDespesas_ReturnAllDEspesa_WhenSuccessful() {
+        Page<Despesa> despesa = new PageImpl<>(List.of(createDespesa()));
+        Mockito.when(repository.findAll(ArgumentMatchers.isA(Pageable.class))).thenReturn(despesa);
+
+        ResponseEntity<Page<RequestDespesa>> ex = service.buscaTodasDespesas(despesa.getPageable());
+
+        Mockito.verify(repository, Mockito.times(1)).findAll(ArgumentMatchers.isA(Pageable.class));
+        Assertions.assertNotNull(ex.getBody());
+        Assertions.assertFalse(ex.getBody().toList().isEmpty());
+        Assertions.assertEquals(200, ex.getStatusCode().value());
+        Assertions.assertEquals(despesa.toList().get(0).getDescricao(), ex.getBody().toList().get(0).getDescricao());
     }
 
     @Test
     @DisplayName("Busca Despesa Por Id return Despesa when Successful")
     void buscaDespesaPorId_ReturnDespesa_WhenSuccessful() {
         Long despesaId = 99L;
-        Optional<Despesa> despesaReturn = Optional.of(criaDespesa());
+        Optional<Despesa> despesaReturn = Optional.of(createDespesa());
         Mockito.when(repository.findById(despesaId)).thenReturn(despesaReturn);
 
         ResponseEntity<RequestDespesa> ex = service.buscaDespesaPorId(despesaId);
@@ -121,7 +122,7 @@ class DespesaServiceImplTest {
     void devolveDespesaSeExistir() {
     }
 
-    private Despesa criaDespesa() {
+    private Despesa createDespesa() {
         Despesa despesa = new Despesa();
         despesa.setId(1L);
         despesa.setDescricao("descricao");
@@ -133,7 +134,7 @@ class DespesaServiceImplTest {
         return despesa;
     }
 
-    private RequestDespesa criaRequestDespesa() {
+    private RequestDespesa createRequestDespesa() {
         RequestDespesa despesa = new RequestDespesa();
         despesa.setId(1L);
         despesa.setDescricao("descricao");

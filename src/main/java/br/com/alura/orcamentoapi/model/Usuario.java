@@ -35,12 +35,12 @@ public class Usuario implements UserDetails {
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
-    private List<Receita> receitas = null;
+    private List<Receita> receitas ;
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
-    private List<Despesa> despesas = null;
+    private List<Despesa> despesas ;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

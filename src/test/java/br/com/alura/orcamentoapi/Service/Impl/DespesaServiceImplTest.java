@@ -205,6 +205,18 @@ class DespesaServiceImplTest {
         Assertions.assertEquals(ex, total);
     }
 
+    @Test
+    @DisplayName("Soma Todas Despesas Por Data returns total 0 when Despesa not found")
+    void somaTodasDespesasPorData_ReturnTotal0_WhenNotFound() {
+        Mockito.when(repository.somaTodasDespesasPorData(ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(null);
+
+        BigDecimal ex = service.somaTodasDespesasPorData(2000, 1);
+
+        Mockito.verify(repository, Mockito.times(1)).somaTodasDespesasPorData(ArgumentMatchers.any(), ArgumentMatchers.any());
+        Assertions.assertNotNull(ex);
+        Assertions.assertEquals(BigDecimal.ZERO, ex);
+    }
+
     private Despesa createDespesa() {
         Despesa despesa = new Despesa();
         despesa.setId(1L);

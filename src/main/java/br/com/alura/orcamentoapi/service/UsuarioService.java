@@ -1,6 +1,7 @@
 package br.com.alura.orcamentoapi.service;
 
 import br.com.alura.orcamentoapi.model.FORM.RequestUsuario;
+import br.com.alura.orcamentoapi.model.FORM.ResponseUser;
 import br.com.alura.orcamentoapi.model.Usuario;
 
 public interface UsuarioService {
@@ -8,11 +9,11 @@ public interface UsuarioService {
 
     Usuario buscaUsuarioPorEmail(String email);
 
-    RequestUsuario adicionaUsuario(RequestUsuario rUsuario);
+    ResponseUser buscaUserPorEmail(String email);
 
-    RequestUsuario deletaUsuario(Long usuarioId);
+    void deletaUsuario(Long usuarioId);
 
-    RequestUsuario atualizaUsuario(Long usuarioId, RequestUsuario rUsuario);
+    RequestUsuario atualizaUsuario(Long usuarioId, String password, RequestUsuario rUsuario);
 
     RequestUsuario adicionaUsuarioComBCrypt (RequestUsuario rUsuario);
 }

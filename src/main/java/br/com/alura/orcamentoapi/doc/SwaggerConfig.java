@@ -18,6 +18,15 @@ public class SwaggerConfig {
                 .group("public-api")
                 .pathsToMatch("/**")
                 .pathsToExclude("/auth/**")
+                .pathsToExclude("/usuarios/**")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi userApi() {
+        return GroupedOpenApi.builder()
+                .group("user-api")
+                .pathsToMatch("/usuarios/**")
                 .build();
     }
 

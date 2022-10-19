@@ -17,8 +17,7 @@ public class SwaggerConfig {
         return GroupedOpenApi.builder()
                 .group("public-api")
                 .pathsToMatch("/**")
-                .pathsToExclude("/auth/**")
-                .pathsToExclude("/usuarios/**")
+                .pathsToExclude("/usuarios/**", "/auth/**")
                 .build();
     }
 

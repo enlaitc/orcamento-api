@@ -7,10 +7,12 @@ import br.com.alura.orcamentoapi.repository.UsuarioRepository;
 import br.com.alura.orcamentoapi.service.UsuarioService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -26,19 +28,19 @@ public class UsuarioServiceImpl implements UsuarioService {
     public Usuario buscaUsuarioPorId(Long id, String nome) {
         Optional<Usuario> usuario = repository.findById(id);
         if (usuario.isPresent() && usuario.get().getNome().equals(nome)) return usuario.get();
-        throw new RuntimeException("Usuario não existe ou nome invalido");
+        throw new EntityNotFoundException("Usuario não existe ou nome invalido");
     }
 
     @Override
     public Usuario buscaUsuarioPorEmail(String email) {
         Optional<Usuario> usuario = repository.findByEmail(email);
         if (usuario.isPresent()) return usuario.get();
-        throw new RuntimeException("Usuario não existe");
+        throw new EntityNotFoundException("Usuario não econtrado");
     }
 
     @Override
     public ResponseUser buscaUserPorEmail(String email) {
-        if(repository.findByEmail(email).isEmpty()) throw new NotFoundException("Usuario não encontrado");
+        if(repository.findByEmail(email).isEmpty()) throw new EntityNotFoundException("Usuario não econtrado");
         Usuario usuario = repository.findByEmail(email).get();
 
         return new ResponseUser(
@@ -75,7 +77,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     public RequestUsuario atualizaUsuario(Long usuarioId, String password, RequestUsuario rUsuario) {
         Optional<Usuario> usuario = repository.findById(usuarioId);
         if (usuario.isEmpty() || !bCryptPasswordEncoder.matches(password, usuario.get().getPassword())){
-            throw new NotFoundException("Usuario não encontrado");
+            throw new EntityNotFoundException("Usuario não econtrado");
         }
 
         rUsuario.setId(usuarioId);

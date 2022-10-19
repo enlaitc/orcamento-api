@@ -1,5 +1,6 @@
 package br.com.alura.orcamentoapi.model;
 
+import br.com.alura.orcamentoapi.model.FORM.ResponseUser;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,11 +15,13 @@ public class Resumo {
     private BigDecimal vTotalDespesas;
     private BigDecimal saldoFinal;
     private List<ValorCategoria> valorCategoria;
+    private ResponseUser user;
 
-    public Resumo(BigDecimal vTotalReceitas, BigDecimal vTotalDespesas, BigDecimal saldoFinal, List<ValorCategoria> valorCategoria) {
+    public Resumo(BigDecimal vTotalReceitas, BigDecimal vTotalDespesas, BigDecimal saldoFinal, List<ValorCategoria> valorCategoria, ResponseUser user) {
         this.vTotalReceitas = vTotalReceitas;
         this.vTotalDespesas = vTotalDespesas;
         this.saldoFinal = saldoFinal;
         this.valorCategoria = valorCategoria;
+        this.user = user;
     }
 }

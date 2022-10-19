@@ -22,9 +22,9 @@ public class ResumoController {
     public ResumoService service;
 
     @Operation(summary = "Resumo do mês", description = "Mostra o valor total de receitas e despesas, o valor gasto por cada categoria e o saldo final. ")
-    @GetMapping("/{ano}/{mes}")
-    public ResponseEntity<Resumo> resumoMes (@PathVariable int ano , @PathVariable int mes){
-        return service.resumoMes(ano, mes);
+    @GetMapping("/{ano}/{mes}/{userId}/{userName}")
+    public ResponseEntity<Resumo> resumoMes (@PathVariable int ano , @PathVariable int mes, @PathVariable Long userId, @PathVariable String userName){
+        return service.resumoMes(ano, mes, userId, userName);
     }
 
 }

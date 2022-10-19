@@ -1,7 +1,7 @@
 package br.com.alura.orcamentoapi.service;
 
 import br.com.alura.orcamentoapi.model.FORM.RequestReceita;
-import br.com.alura.orcamentoapi.model.Receita;
+import br.com.alura.orcamentoapi.model.Usuario;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -25,5 +25,5 @@ public interface ReceitaService {
 
     ResponseEntity<Void> deletaReceita(Long receitaId);
 
-    BigDecimal somaTodasReceitasPorData(int ano, int mes);
+    BigDecimal somaTodasReceitasPorData(int ano, int mes, Usuario usuario);
 }

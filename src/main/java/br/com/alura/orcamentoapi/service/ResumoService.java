@@ -5,5 +5,5 @@ import org.springframework.http.ResponseEntity;
 
 public interface ResumoService {
 
-    ResponseEntity<Resumo> resumoMes (int ano, int mes);
+    ResponseEntity<Resumo> resumoMes (int ano, int mes, Long userId, String userName);
 }

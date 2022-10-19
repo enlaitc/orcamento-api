@@ -1,6 +1,7 @@
 package br.com.alura.orcamentoapi.repository;
 
 import br.com.alura.orcamentoapi.model.Receita;
+import br.com.alura.orcamentoapi.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -16,6 +17,6 @@ public interface ReceitaRepository extends JpaRepository<Receita, Long> {
 
     List<Receita> findByDataBetween(LocalDate dataIni, LocalDate dataFin);
 
-    @Query("SELECT SUM(d.valor) FROM Receita d WHERE d.data BETWEEN :dataIni AND :dataFin")
-    BigDecimal somaTodasReceitasPorData(LocalDate dataIni, LocalDate dataFin);
+    @Query("SELECT SUM(d.valor) FROM Receita d WHERE d.user = :user AND d.data BETWEEN :dataIni AND :dataFin")
+    BigDecimal somaTodasReceitasPorData(LocalDate dataIni, LocalDate dataFin, Usuario user);
 }

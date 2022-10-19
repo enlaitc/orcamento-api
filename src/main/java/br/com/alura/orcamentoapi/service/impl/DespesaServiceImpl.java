@@ -106,21 +106,23 @@ public class DespesaServiceImpl implements DespesaService {
         return ResponseEntity.noContent().build();
     }
 
-    public List<ValorCategoria> buscaValorTotalPorCategoria(int ano, int mes) {
+    public List<ValorCategoria> buscaValorTotalPorCategoria(int ano, int mes, Usuario usuario) {
         int diaFin = LocalDate.of(ano, mes, 1).lengthOfMonth();
 
         return repository.buscaValorTotalPorCategoria(
                 LocalDate.of(ano, mes, 1)
                 , LocalDate.of(ano, mes, diaFin)
+                , usuario
         );
     }
 
-    public BigDecimal somaTodasDespesasPorData(int ano, int mes) {
+    public BigDecimal somaTodasDespesasPorData(int ano, int mes, Usuario usuario) {
         int diaFin = LocalDate.of(ano, mes, 1).lengthOfMonth();
 
         BigDecimal soma =  repository.somaTodasDespesasPorData(
                 LocalDate.of(ano, mes, 1)
                 , LocalDate.of(ano, mes, diaFin)
+                , usuario
         );
 
         if(soma != null) return soma;

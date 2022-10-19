@@ -103,12 +103,13 @@ public class ReceitaServiceImpl implements ReceitaService {
         return ResponseEntity.noContent().build();
     }
 
-    public BigDecimal somaTodasReceitasPorData(int ano, int mes) {
+    public BigDecimal somaTodasReceitasPorData(int ano, int mes, Usuario usuario) {
         int diaFin = LocalDate.of(ano, mes, 1).lengthOfMonth();
 
         BigDecimal soma = repository.somaTodasReceitasPorData(
                 LocalDate.of(ano, mes, 1)
                 , LocalDate.of(ano, mes, diaFin)
+                , usuario
         );
 
         if(soma != null) return soma;

@@ -5,12 +5,13 @@ import br.com.alura.orcamentoapi.model.Despesa;
 import br.com.alura.orcamentoapi.model.FORM.RequestDespesa;
 import br.com.alura.orcamentoapi.model.FORM.ResponseUser;
 import br.com.alura.orcamentoapi.model.Usuario;
-import br.com.alura.orcamentoapi.model.ValorCategoria;
 import br.com.alura.orcamentoapi.repository.DespesaRepository;
 import br.com.alura.orcamentoapi.service.UsuarioService;
 import br.com.alura.orcamentoapi.service.impl.DespesaServiceImpl;
+import br.com.alura.orcamentoapi.util.DespesaCreate;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +25,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,92 +39,90 @@ class DespesaServiceImplTest {
     private DespesaServiceImpl service;
 
     @Mock
-    private DespesaRepository repository;
+    private DespesaRepository repositoryMock;
 
     @Mock
-    private UsuarioService usuarioService;
+    private UsuarioService usuarioServiceMock;
 
     @Test
     @DisplayName("Save create Despesa with RequestDespesa when successful")
     void save_SaveDespesa_WhenSuccessful() {
-        RequestDespesa rDespesa = createRequestDespesa();
-        Usuario usuario = createUsuario();
-        Despesa despesa = createDespesa();
+        RequestDespesa rDespesa = DespesaCreate.mockRequestDespesa();
+        Usuario usuario = DespesaCreate.mockUsuario();
+        Despesa despesa = DespesaCreate.mockDespesa();
         despesa.setData(LocalDate.of(1999, 12, 1));
 
-        Mockito.when(usuarioService.buscaUsuarioPorId(rDespesa.getUsuario().getId(), rDespesa.getUsuario().getNome())).thenReturn(usuario);
-        Mockito.when(repository.findByDescricao(ArgumentMatchers.any())).thenReturn(List.of(despesa));
-        Mockito.when(repository.save(ArgumentMatchers.any())).thenReturn(despesa);
+        Mockito.when(usuarioServiceMock.buscaUsuarioPorId(ArgumentMatchers.any(),ArgumentMatchers.any())).thenReturn(usuario);
+        Mockito.when(repositoryMock.findByDescricao(ArgumentMatchers.any())).thenReturn(Collections.emptyList());
+        Mockito.when(repositoryMock.save(ArgumentMatchers.any())).thenReturn(despesa);
 
-        service.adicionaDespesa(rDespesa);
+        RequestDespesa result = service.adicionaDespesa(rDespesa);
 
-        Mockito.verify(usuarioService, Mockito.times(1)).buscaUsuarioPorId(rDespesa.getUsuario().getId(), rDespesa.getUsuario().getNome());
-        Mockito.verify(repository, Mockito.times(1)).save(ArgumentMatchers.any());
+        Mockito.verify(usuarioServiceMock, Mockito.times(1)).buscaUsuarioPorId(rDespesa.getUsuario().getId(), rDespesa.getUsuario().getNome());
+        Mockito.verify(repositoryMock, Mockito.times(1)).save(ArgumentMatchers.any());
+        Assertions.assertEquals(result, rDespesa);
     }
 
     @Test
     @DisplayName("Busca Todas Despesas return all Despesa when Successful")
-    void buscaTodasDespesas_ReturnAllDEspesa_WhenSuccessful() {
-        Page<Despesa> despesa = new PageImpl<>(List.of(createDespesa()));
-        Mockito.when(repository.findAll(ArgumentMatchers.isA(Pageable.class))).thenReturn(despesa);
+    void buscaTodasDespesas_ReturnAllDespesa_WhenSuccessful() {
+        Page<Despesa> despesa = new PageImpl<>(List.of(DespesaCreate.mockDespesa()));
+        Page<RequestDespesa> rDespesaExpected = new PageImpl<>(List.of(DespesaCreate.mockRequestDespesa()));
 
-        ResponseEntity<Page<RequestDespesa>> ex = service.buscaTodasDespesas(despesa.getPageable());
+        Mockito.when(repositoryMock.findAll(ArgumentMatchers.isA(Pageable.class))).thenReturn(despesa);
 
-        Mockito.verify(repository, Mockito.times(1)).findAll(ArgumentMatchers.isA(Pageable.class));
-        Assertions.assertNotNull(ex.getBody());
-        Assertions.assertFalse(ex.getBody().toList().isEmpty());
-        Assertions.assertEquals(200, ex.getStatusCode().value());
-        Assertions.assertEquals(despesa.toList().get(0).getDescricao(), ex.getBody().toList().get(0).getDescricao());
+        ResponseEntity<Page<RequestDespesa>> result = service.buscaTodasDespesas(despesa.getPageable());
+
+        Mockito.verify(repositoryMock, Mockito.times(1)).findAll(ArgumentMatchers.isA(Pageable.class));
+        Assertions.assertNotNull(result.getBody());
+        Assertions.assertEquals(result.getBody().getContent().get(0).getId(),rDespesaExpected.getContent().get(0).getId());
     }
 
     @Test
     @DisplayName("Busca Despesa Por Id return Despesa when Successful")
     void buscaDespesaPorId_ReturnDespesa_WhenSuccessful() {
         Long despesaId = 99L;
-        Optional<Despesa> despesaReturn = Optional.of(createDespesa());
-        Mockito.when(repository.findById(despesaId)).thenReturn(despesaReturn);
+        Despesa despesaReturn = DespesaCreate.mockDespesa();
+        RequestDespesa rDespesaExpected = DespesaCreate.mockRequestDespesa();
 
-        ResponseEntity<RequestDespesa> ex = service.buscaDespesaPorId(despesaId);
+        Mockito.when(repositoryMock.findById(despesaId)).thenReturn(Optional.of(despesaReturn));
 
-        Assertions.assertEquals(1L, ex.getBody().getId());
-        Mockito.verify(repository, Mockito.times(1)).findById(despesaId);
+        ResponseEntity<RequestDespesa> result = service.buscaDespesaPorId(despesaId);
+
+        Mockito.verify(repositoryMock, Mockito.times(1)).findById(despesaId);
+        Assertions.assertTrue(result.hasBody());
+        Assertions.assertEquals(result.getBody().getId(),rDespesaExpected.getId());
     }
 
     @Test
     @DisplayName("Busca Despesa Por Desc return list of Despesa by descricao when successful")
     void buscaDespesaPorDesc_ReturnListOfDespesa_WhenSuccessful() {
         String descricao = "descricao";
-        List<Despesa> despesas = List.of(createDespesa());
-        List<RequestDespesa> listaReturn = List.of(createRequestDespesa());
+        List<Despesa> despesas = List.of(DespesaCreate.mockDespesa());
+        List<RequestDespesa> listaReturn = List.of(DespesaCreate.mockRequestDespesa());
 
-        Mockito.when(repository.findByDescricao(descricao)).thenReturn(despesas);
+        Mockito.when(repositoryMock.findByDescricao(descricao)).thenReturn(despesas);
 
-        ResponseEntity<List<RequestDespesa>> ex = service.buscaDespesaPorDesc(descricao);
+        ResponseEntity<List<RequestDespesa>> result = service.buscaDespesaPorDesc(descricao);
 
-        Mockito.verify(repository, Mockito.times(1)).findByDescricao(descricao);
-        Assertions.assertEquals(ex.getBody().get(0).getId(), listaReturn.get(0).getId());
-        Assertions.assertEquals(200, ex.getStatusCode().value());
+        Mockito.verify(repositoryMock, Mockito.times(1)).findByDescricao(descricao);
+        Assertions.assertEquals(result.getBody().get(0).getId(), listaReturn.get(0).getId());
     }
 
     @Test
     @DisplayName("Busca Todas Despesas Por Mes return list of Despesa by year and month")
     void buscaTodasDespesasPorMes_ReturnListOfDespesa_WhenSuccessful() {
-        List<Despesa> despesas = List.of(createDespesa());
-        List<RequestDespesa> listaReturn = List.of(createRequestDespesa());
+        List<Despesa> despesas = List.of(DespesaCreate.mockDespesa());
+        List<RequestDespesa> listaReturn = List.of(DespesaCreate.mockRequestDespesa());
         int ano = LocalDate.now().getYear();
         int mes = LocalDate.now().getMonthValue();
-        int dia = LocalDate.now().lengthOfMonth();
-        LocalDate dataFin = LocalDate.of(ano, mes, dia);
-        LocalDate dataIni = LocalDate.of(ano, mes, 1);
 
-        Mockito.when(repository.findByDataBetween(dataIni, dataFin)).thenReturn(despesas);
+        Mockito.when(repositoryMock.findByDataBetween(ArgumentMatchers.isA(LocalDate.class), ArgumentMatchers.isA(LocalDate.class))).thenReturn(despesas);
 
-        ResponseEntity<List<RequestDespesa>> ex = service.buscaTodasDespesasPorMes(ano, mes);
+        ResponseEntity<List<RequestDespesa>> result = service.buscaTodasDespesasPorMes(ano, mes);
 
-        Mockito.verify(repository, Mockito.times(1)).findByDataBetween(dataIni, dataFin);
-        Assertions.assertEquals(ex.getBody().get(0).getId(), listaReturn.get(0).getId());
-        Assertions.assertEquals(200, ex.getStatusCode().value());
-
+        Mockito.verify(repositoryMock, Mockito.times(1)).findByDataBetween(ArgumentMatchers.isA(LocalDate.class), ArgumentMatchers.isA(LocalDate.class));
+        Assertions.assertEquals(result.getBody().get(0).getId(), listaReturn.get(0).getId());
     }
 
     @Test
@@ -133,14 +133,14 @@ class DespesaServiceImplTest {
         RequestDespesa despesaUp = createRequestDespesa();
         despesaUp.setValor(BigDecimal.TEN);
 
-        Mockito.when(repository.findById(despesaId)).thenReturn(Optional.of(despesa));
-        Mockito.when(repository.save(ArgumentMatchers.any())).thenReturn(despesa);
+        Mockito.when(repositoryMock.findById(despesaId)).thenReturn(Optional.of(despesa));
+        Mockito.when(repositoryMock.save(ArgumentMatchers.any())).thenReturn(despesa);
 
-        ResponseEntity<RequestDespesa> ex = service.atualizaDespesa(despesaId, despesaUp);
+        ResponseEntity<RequestDespesa> result = service.atualizaDespesa(despesaId, despesaUp);
 
-        Mockito.verify(repository, Mockito.times(1)).findById(despesaId);
-        Mockito.verify(repository, Mockito.times(1)).save(despesa);
-        Assertions.assertEquals(ex.getBody().getId(), despesaUp.getId());
+        Mockito.verify(repositoryMock, Mockito.times(1)).findById(despesaId);
+        Mockito.verify(repositoryMock, Mockito.times(1)).save(despesa);
+        Assertions.assertEquals(result.getBody().getId(), despesaUp.getId());
     }
 
     @Test
@@ -148,74 +148,74 @@ class DespesaServiceImplTest {
     void deletaDespesa_RemovesDespesa_WhenSuccessful() {
         Despesa despesa = createDespesa();
 
-        Mockito.when(repository.findById(despesa.getId())).thenReturn(Optional.of(despesa));
+        Mockito.when(repositoryMock.findById(despesa.getId())).thenReturn(Optional.of(despesa));
 
         service.deletaDespesa(despesa.getId());
 
-        Mockito.verify(repository, Mockito.times(1)).deleteById(ArgumentMatchers.any(Long.class));
+        Mockito.verify(repositoryMock, Mockito.times(1)).deleteById(ArgumentMatchers.any(Long.class));
     }
 
-    @Test
-    @DisplayName("Busca Valor Total Por Categoria returns list of ValorCategoria between start date and end date when successful")
-    void buscaValorTotalPorCategoria_ReturnListOfValorCategoria_WhenSuccessful() {
-        int ano = LocalDate.now().getYear();
-        int mes = LocalDate.now().getMonthValue();
-        int dia = LocalDate.now().lengthOfMonth();
-        LocalDate dataFin = LocalDate.of(ano, mes, dia);
-        LocalDate dataIni = LocalDate.of(ano, mes, 1);
-
-        ValorCategoria valorCategoria = new ValorCategoria() {
-            @Override
-            public String getCategoria() {
-                return CategoriaDespesa.OUTRAS.getDescricao();
-            }
-
-            @Override
-            public BigDecimal getTotal() {
-                return BigDecimal.TEN;
-            }
-        };
-        Mockito.when(repository.buscaValorTotalPorCategoria(dataIni, dataFin)).thenReturn(List.of(valorCategoria));
-
-        List<ValorCategoria> ex = service.buscaValorTotalPorCategoria(ano, mes);
-
-        Mockito.verify(repository).buscaValorTotalPorCategoria(dataIni, dataFin);
-        Assertions.assertEquals(ex.get(0).getCategoria(), valorCategoria.getCategoria());
-        Assertions.assertEquals(ex.get(0).getTotal(), valorCategoria.getTotal());
-
-
-    }
-
-    @Test
-    @DisplayName("Soma Todas Despesas Por Data returns the total value of all Despesa found between start date and end date when successful")
-    void somaTodasDespesasPorData_ReturnDespesaTotalValue_WhenSuccessful() {
-        int ano = LocalDate.now().getYear();
-        int mes = LocalDate.now().getMonthValue();
-        int dia = LocalDate.now().lengthOfMonth();
-        LocalDate dataFin = LocalDate.of(ano, mes, dia);
-        LocalDate dataIni = LocalDate.of(ano, mes, 1);
-        BigDecimal total = BigDecimal.TEN;
-
-        Mockito.when(repository.somaTodasDespesasPorData(dataIni, dataFin)).thenReturn(total);
-
-        BigDecimal ex = service.somaTodasDespesasPorData(ano, mes);
-
-        Mockito.verify(repository, Mockito.times(1)).somaTodasDespesasPorData(dataIni, dataFin);
-        Assertions.assertNotNull(ex);
-        Assertions.assertEquals(ex, total);
-    }
-
-    @Test
-    @DisplayName("Soma Todas Despesas Por Data returns total 0 when Despesa not found")
-    void somaTodasDespesasPorData_ReturnTotal0_WhenNotFound() {
-        Mockito.when(repository.somaTodasDespesasPorData(ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(null);
-
-        BigDecimal ex = service.somaTodasDespesasPorData(2000, 1);
-
-        Mockito.verify(repository, Mockito.times(1)).somaTodasDespesasPorData(ArgumentMatchers.any(), ArgumentMatchers.any());
-        Assertions.assertNotNull(ex);
-        Assertions.assertEquals(BigDecimal.ZERO, ex);
-    }
+//    @Test
+//    @DisplayName("Busca Valor Total Por Categoria returns list of ValorCategoria between start date and end date when successful")
+//    void buscaValorTotalPorCategoria_ReturnListOfValorCategoria_WhenSuccessful() {
+//        int ano = LocalDate.now().getYear();
+//        int mes = LocalDate.now().getMonthValue();
+//        int dia = LocalDate.now().lengthOfMonth();
+//        LocalDate dataFin = LocalDate.of(ano, mes, dia);
+//        LocalDate dataIni = LocalDate.of(ano, mes, 1);
+//
+//        ValorCategoria valorCategoria = new ValorCategoria() {
+//            @Override
+//            public String getCategoria() {
+//                return CategoriaDespesa.OUTRAS.getDescricao();
+//            }
+//
+//            @Override
+//            public BigDecimal getTotal() {
+//                return BigDecimal.TEN;
+//            }
+//        };
+//        Mockito.when(repository.buscaValorTotalPorCategoria(dataIni, dataFin)).thenReturn(List.of(valorCategoria));
+//
+//        List<ValorCategoria> result = service.buscaValorTotalPorCategoria(ano, mes);
+//
+//        Mockito.verify(repository).buscaValorTotalPorCategoria(dataIni, dataFin);
+//        Assertions.assertEquals(result.get(0).getCategoria(), valorCategoria.getCategoria());
+//        Assertions.assertEquals(result.get(0).getTotal(), valorCategoria.getTotal());
+//
+//
+//    }
+//
+//    @Test
+//    @DisplayName("Soma Todas Despesas Por Data returns the total value of all Despesa found between start date and end date when successful")
+//    void somaTodasDespesasPorData_ReturnDespesaTotalValue_WhenSuccessful() {
+//        int ano = LocalDate.now().getYear();
+//        int mes = LocalDate.now().getMonthValue();
+//        int dia = LocalDate.now().lengthOfMonth();
+//        LocalDate dataFin = LocalDate.of(ano, mes, dia);
+//        LocalDate dataIni = LocalDate.of(ano, mes, 1);
+//        BigDecimal total = BigDecimal.TEN;
+//
+//        Mockito.when(repository.somaTodasDespesasPorData(dataIni, dataFin)).thenReturn(total);
+//
+//        BigDecimal result = service.somaTodasDespesasPorData(ano, mes);
+//
+//        Mockito.verify(repository, Mockito.times(1)).somaTodasDespesasPorData(dataIni, dataFin);
+//        Assertions.assertNotNull(result);
+//        Assertions.assertEquals(result, total);
+//    }
+//
+//    @Test
+//    @DisplayName("Soma Todas Despesas Por Data returns total 0 when Despesa not found")
+//    void somaTodasDespesasPorData_ReturnTotal0_WhenNotFound() {
+//        Mockito.when(repository.somaTodasDespesasPorData(ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(null);
+//
+//        BigDecimal result = service.somaTodasDespesasPorData(2000, 1);
+//
+//        Mockito.verify(repository, Mockito.times(1)).somaTodasDespesasPorData(ArgumentMatchers.any(), ArgumentMatchers.any());
+//        Assertions.assertNotNull(result);
+//        Assertions.assertEquals(BigDecimal.ZERO, result);
+//    }
 
     private Despesa createDespesa() {
         Despesa despesa = new Despesa();

@@ -72,44 +72,44 @@ class DespesaRepositoryTest {
         Assertions.assertTrue(despesas.isEmpty());
     }
 
-    @Test
-    @DisplayName("Busca Valor Total Por Categoria returns list of ValorCategoria between start date and end date when successful")
-    void buscaValorTotalPorCategoria_ReturnListOfValorCategoria_WhenSuccessful() {
-        Despesa despesa = createDespesa();
-        despesa.setData(LocalDate.of(2000, 12, 15));
-
-        List<ValorCategoria> valorCategorias = repository.buscaValorTotalPorCategoria(dataIni,dataFin);
-
-        Assertions.assertEquals(valorCategorias.get(0).getCategoria(), despesa.getCategoria().getDescricao());
-        Assertions.assertEquals(valorCategorias.get(0).getTotal(), despesa.getValor());
-    }
-
-    @Test
-    @DisplayName("Busca Valor Total Por Categoria returns empty list when no Despesa is found between start date and end date")
-    void buscaValorTotalPorCategoria_ReturnsEmptyList_WhenDespesaIsNotFound() {
-        List<ValorCategoria> valorCategorias = repository.buscaValorTotalPorCategoria(dataIni,dataFin);
-
-        Assertions.assertTrue(valorCategorias.isEmpty());
-    }
-
-    @Test
-    @DisplayName("Soma Todas Despesas Por Data returns the total value of all Despesa found between start date and end date when successful")
-    void somaTodasDespesasPorData_ReturnDespesaTotalValue_WhenSuccessful(){
-        Despesa despesa = createDespesa();
-        despesa.setData(LocalDate.of(2000,12,15));
-
-        BigDecimal vTotal = repository.somaTodasDespesasPorData(dataIni,dataFin);
-
-        Assertions.assertEquals(vTotal, despesa.getValor());
-    }
-
-    @Test
-    @DisplayName("Soma Todas Despesas Por Data returns null when no Despesa is found between start date and end date")
-    void somaTodasDespesasPorData_ReturnNull_WhenDespesaIsNotFound(){
-        BigDecimal vTotal = repository.somaTodasDespesasPorData(dataIni,dataFin);
-
-        Assertions.assertNull(vTotal);
-    }
+//    @Test
+//    @DisplayName("Busca Valor Total Por Categoria returns list of ValorCategoria between start date and end date when successful")
+//    void buscaValorTotalPorCategoria_ReturnListOfValorCategoria_WhenSuccessful() {
+//        Despesa despesa = createDespesa();
+//        despesa.setData(LocalDate.of(2000, 12, 15));
+//
+//        List<ValorCategoria> valorCategorias = repository.buscaValorTotalPorCategoria(dataIni,dataFin);
+//
+//        Assertions.assertEquals(valorCategorias.get(0).getCategoria(), despesa.getCategoria().getDescricao());
+//        Assertions.assertEquals(valorCategorias.get(0).getTotal(), despesa.getValor());
+//    }
+//
+//    @Test
+//    @DisplayName("Busca Valor Total Por Categoria returns empty list when no Despesa is found between start date and end date")
+//    void buscaValorTotalPorCategoria_ReturnsEmptyList_WhenDespesaIsNotFound() {
+//        List<ValorCategoria> valorCategorias = repository.buscaValorTotalPorCategoria(dataIni,dataFin);
+//
+//        Assertions.assertTrue(valorCategorias.isEmpty());
+//    }
+//
+//    @Test
+//    @DisplayName("Soma Todas Despesas Por Data returns the total value of all Despesa found between start date and end date when successful")
+//    void somaTodasDespesasPorData_ReturnDespesaTotalValue_WhenSuccessful(){
+//        Despesa despesa = createDespesa();
+//        despesa.setData(LocalDate.of(2000,12,15));
+//
+//        BigDecimal vTotal = repository.somaTodasDespesasPorData(dataIni,dataFin);
+//
+//        Assertions.assertEquals(vTotal, despesa.getValor());
+//    }
+//
+//    @Test
+//    @DisplayName("Soma Todas Despesas Por Data returns null when no Despesa is found between start date and end date")
+//    void somaTodasDespesasPorData_ReturnNull_WhenDespesaIsNotFound(){
+//        BigDecimal vTotal = repository.somaTodasDespesasPorData(dataIni,dataFin);
+//
+//        Assertions.assertNull(vTotal);
+//    }
 
     @Test
     @DisplayName("Find By Id returns Despesa when successful")

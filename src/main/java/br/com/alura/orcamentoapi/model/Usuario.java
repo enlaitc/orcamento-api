@@ -103,10 +103,6 @@ public class Usuario implements UserDetails {
         return senha;
     }
 
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

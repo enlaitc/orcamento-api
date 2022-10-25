@@ -5,16 +5,14 @@ import br.com.alura.orcamentoapi.model.Despesa;
 import br.com.alura.orcamentoapi.model.FORM.RequestDespesa;
 import br.com.alura.orcamentoapi.model.FORM.ResponseUser;
 import br.com.alura.orcamentoapi.model.Usuario;
-import org.mockito.ArgumentMatchers;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public class DespesaCreate {
+public class Creator {
 
-    public static RequestDespesa mockRequestDespesa(){
+    public static RequestDespesa mockRequestDespesaGenerico(){
         RequestDespesa rDespesa = Mockito.mock(RequestDespesa.class);
         Mockito.when(rDespesa.getId()).thenReturn(1L);
         Mockito.when(rDespesa.getDescricao()).thenReturn("descricao");
@@ -25,7 +23,7 @@ public class DespesaCreate {
         return rDespesa;
     }
 
-    public static Despesa mockDespesa(){
+    public static Despesa mockDespesaGenerico(){
         Despesa despesa = Mockito.mock(Despesa.class);
         Mockito.when(despesa.getId()).thenReturn(1L);
         Mockito.when(despesa.getDescricao()).thenReturn("descricao");
@@ -36,7 +34,7 @@ public class DespesaCreate {
         return despesa;
     }
 
-    public static Usuario mockUsuario(){
+    public static Usuario mockUsuarioGenerico(){
         Usuario usuario = Mockito.mock(Usuario.class);
         Mockito.when(usuario.getId()).thenReturn(1L);
         Mockito.when(usuario.getNome()).thenReturn("UsuarioTeste");
@@ -48,34 +46,7 @@ public class DespesaCreate {
         return usuario;
     }
 
-    public static Despesa createDespesa() {
-        Despesa despesa = new Despesa();
-        despesa.setId(1L);
-        despesa.setDescricao("descricao");
-        despesa.setValor(BigDecimal.ONE);
-        despesa.setData(LocalDate.now());
-        despesa.setCategoria(CategoriaDespesa.OUTRAS);
-        despesa.setUser(createUsuario());
-
-        return despesa;
-    }
-
-    public static RequestDespesa createRequestDespesa() {
-        RequestDespesa despesa = new RequestDespesa();
-        despesa.setId(1L);
-        despesa.setDescricao("descricao");
-        despesa.setValor(BigDecimal.ONE);
-        despesa.setData(LocalDate.now());
-        despesa.setCategoria(CategoriaDespesa.OUTRAS);
-        despesa.setUsuario(new ResponseUser(
-                createUsuario().getId(),
-                createUsuario().getNome()
-        ));
-
-        return despesa;
-    }
-
-    public static Usuario createUsuario() {
+    private static Usuario createUsuario() {
         Usuario usuario = new Usuario(
                 1L,
                 "UsuarioTeste",

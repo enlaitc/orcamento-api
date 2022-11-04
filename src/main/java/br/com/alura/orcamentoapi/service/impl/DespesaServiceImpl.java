@@ -1,10 +1,12 @@
 package br.com.alura.orcamentoapi.service.impl;
 
-import br.com.alura.orcamentoapi.model.CategoriaDespesa;
 import br.com.alura.orcamentoapi.model.Despesa;
+import br.com.alura.orcamentoapi.model.FORM.RequestDespesa;
+import br.com.alura.orcamentoapi.model.Usuario;
 import br.com.alura.orcamentoapi.model.ValorCategoria;
 import br.com.alura.orcamentoapi.repository.DespesaRepository;
 import br.com.alura.orcamentoapi.service.DespesaService;
+import br.com.alura.orcamentoapi.service.UsuarioService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -22,52 +25,72 @@ import java.util.List;
 public class DespesaServiceImpl implements DespesaService {
 
     private DespesaRepository repository;
+    private UsuarioService usuarioService;
 
     @Transactional
     @Override
-    public Despesa adicionaDespesa(Despesa despesa) {
-        LocalDate data = despesa.getData();
-        if (despesa.getCategoria() == null) despesa.setCategoria(CategoriaDespesa.OUTRAS);
+    public RequestDespesa adicionaDespesa(RequestDespesa despesa) {
+        verificaSeExisteAMesmaDescricaoNoMesEAno(despesa.getDescricao(), despesa.getData());
 
-        repository.findByDescricao(despesa.getDescricao()).forEach(d -> {
-            if (d.getData().getMonthValue() == data.getMonthValue() && d.getData().getYear() == data.getYear()) {
-                throw new RuntimeException("Mes e data repetidos.");
-            }
-        });
+        Usuario usuario = usuarioService.buscaUsuarioPorId(despesa.getUsuario().getId(), despesa.getUsuario().getNome());
+        Long id = despesa.getId() == 0 ? null : despesa.getId();
 
-        return repository.save(despesa);
+        Despesa parseDespesa = new Despesa(
+                id,
+                despesa.getDescricao(),
+                despesa.getValor(),
+                despesa.getData(),
+                despesa.getCategoria(),
+                usuario
+        );
+        despesa.setId(repository.save(parseDespesa).getId());
+
+        return despesa;
+
     }
 
     @Override
-    public Page<Despesa> buscaTodasDespesas(Pageable pageable) {
-        return repository.findAll(pageable);
+    public ResponseEntity<Page<RequestDespesa>> buscaTodasDespesas(Pageable pageable) {
+        Page<Despesa> despesas = repository.findAll(pageable);
+
+        return ResponseEntity.ok(despesas.map(RequestDespesa::converter));
     }
 
     @Override
-    public Despesa buscaDespesaPorId(Long despesaId) {
-        despesaExiste(despesaId);
+    public ResponseEntity<RequestDespesa> buscaDespesaPorId(Long despesaId) {
+        Despesa despesa = devolveDespesaSeExistir(despesaId);
 
-        return repository.findById(despesaId).get();
+        return ResponseEntity.ok(RequestDespesa.converter(despesa));
     }
 
     @Override
-    public List<Despesa> buscaDespesaPorDesc(String despesaDesc) {
-        return repository.findByDescricao(despesaDesc);
+    public ResponseEntity<List<RequestDespesa>> buscaDespesaPorDesc(String despesaDesc) {
+        List<Despesa> despesas = repository.findByDescricao(despesaDesc);
+        List<RequestDespesa> lista = new ArrayList<>();
+
+        despesas.forEach(d -> lista.add(RequestDespesa.converter(d)));
+
+        return ResponseEntity.ok(lista);
     }
 
     @Override
-    public List<Despesa> buscaTodasDespesasPorMes(int ano, int mes) {
+    public ResponseEntity<List<RequestDespesa>> buscaTodasDespesasPorMes(int ano, int mes) {
         int diaFin = LocalDate.of(ano, mes, 1).lengthOfMonth();
 
-        return repository.findByDataBetween(
+        List<Despesa> despesas = repository.findByDataBetween(
                 LocalDate.of(ano, mes, 1)
                 , LocalDate.of(ano, mes, diaFin));
+
+        List<RequestDespesa> lista = new ArrayList<>();
+        despesas.forEach(d -> lista.add(RequestDespesa.converter(d)));
+
+        return ResponseEntity.ok(lista);
     }
 
     @Transactional
     @Override
-    public ResponseEntity<Despesa> atualizaDespesa(Long despesaId, Despesa despesaUp) {
-        despesaExiste(despesaId);
+    public ResponseEntity<RequestDespesa> atualizaDespesa(Long despesaId, RequestDespesa despesaUp) {
+        devolveDespesaSeExistir(despesaId);
 
         despesaUp.setId(despesaId);
 
@@ -76,28 +99,30 @@ public class DespesaServiceImpl implements DespesaService {
 
     @Override
     public ResponseEntity<Void> deletaDespesa(Long despesaId) {
-        despesaExiste(despesaId);
+        devolveDespesaSeExistir(despesaId);
 
         repository.deleteById(despesaId);
 
         return ResponseEntity.noContent().build();
     }
 
-    public List<ValorCategoria> buscaValorTotalPorCategoria(int ano, int mes) {
+    public List<ValorCategoria> buscaValorTotalPorCategoria(int ano, int mes, Usuario usuario) {
         int diaFin = LocalDate.of(ano, mes, 1).lengthOfMonth();
 
         return repository.buscaValorTotalPorCategoria(
                 LocalDate.of(ano, mes, 1)
                 , LocalDate.of(ano, mes, diaFin)
+                , usuario
         );
     }
 
-    public BigDecimal somaTodasDespesasPorData(int ano, int mes) {
+    public BigDecimal somaTodasDespesasPorData(int ano, int mes, Usuario usuario) {
         int diaFin = LocalDate.of(ano, mes, 1).lengthOfMonth();
 
         BigDecimal soma =  repository.somaTodasDespesasPorData(
                 LocalDate.of(ano, mes, 1)
                 , LocalDate.of(ano, mes, diaFin)
+                , usuario
         );
 
         if(soma != null) return soma;
@@ -105,9 +130,17 @@ public class DespesaServiceImpl implements DespesaService {
         return new BigDecimal(0);
     }
 
-    public void despesaExiste(Long despesaId) {
-        repository.findById(despesaId)
+    private Despesa devolveDespesaSeExistir(Long despesaId) {
+        return repository.findById(despesaId)
                 .orElseThrow(() -> new EntityNotFoundException("Despesa não encontrada"));
+    }
+
+    private void verificaSeExisteAMesmaDescricaoNoMesEAno(String descricao, LocalDate data){
+        repository.findByDescricao(descricao).forEach(d -> {
+            if (d.getData().getMonthValue() == data.getMonthValue() && d.getData().getYear() == data.getYear()) {
+                throw new RuntimeException("Mes e data repetidos.");
+            }
+        });
     }
 
 }

@@ -1,5 +1,6 @@
 package br.com.alura.orcamentoapi.controller;
 
+import br.com.alura.orcamentoapi.model.FORM.RequestReceita;
 import br.com.alura.orcamentoapi.model.Receita;
 import br.com.alura.orcamentoapi.service.ReceitaService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,31 +29,31 @@ public class ReceitaController {
     @Operation(summary = "Adiciona uma receita")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Receita adicionaReceita(@RequestBody Receita receita){
+    public RequestReceita adicionaReceita(@RequestBody RequestReceita receita){
         return service.adicionaReceita(receita);
     }
 
     @Operation(summary = "Busca todas as receitas")
     @GetMapping
-    public Page<Receita> buscaTodasReceitas(@ParameterObject @PageableDefault(sort = "data") Pageable pageable){
+    public ResponseEntity<Page<RequestReceita>> buscaTodasReceitas(@ParameterObject @PageableDefault(sort = "data") Pageable pageable){
         return service.buscaTodasReceitas(pageable);
     }
 
     @Operation(summary = "Receitas por id")
     @GetMapping("/id/{receitaId}")
-    public Receita buscaReceitaPorId(@PathVariable Long receitaId){
+    public ResponseEntity<RequestReceita> buscaReceitaPorId(@PathVariable Long receitaId){
         return service.buscaReceitaPorId(receitaId);
     }
 
     @Operation(summary = "Receitas por descrição")
     @GetMapping("/desc/{receitaDesc}")
-    public List<Receita> buscaReceitaPorDesc(@PathVariable String receitaDesc){
+    public ResponseEntity<List<RequestReceita>> buscaReceitaPorDesc(@PathVariable String receitaDesc){
         return service.buscaReceitaPorDesc(receitaDesc);
     }
 
     @Operation(summary = "Atualiza uma receita")
     @PutMapping("/{receitaId}")
-    public ResponseEntity<Receita> atualizaReceita(@PathVariable Long receitaId, @RequestBody Receita receitaUp){
+    public ResponseEntity<RequestReceita> atualizaReceita(@PathVariable Long receitaId, @RequestBody RequestReceita receitaUp){
         return service.atualizaReceita(receitaId,receitaUp);
     }
 
@@ -64,7 +65,7 @@ public class ReceitaController {
 
     @Operation(summary = "Receitas por ano/mes")
     @GetMapping("/{ano}/{mes}")
-    public List<Receita> buscaTodasReceitasPorMes(@PathVariable int ano, @PathVariable int mes){
+    public ResponseEntity<List<RequestReceita>> buscaTodasReceitasPorMes(@PathVariable int ano, @PathVariable int mes){
         return service.buscaTodasReceitasPorMes(ano, mes);
     }
 

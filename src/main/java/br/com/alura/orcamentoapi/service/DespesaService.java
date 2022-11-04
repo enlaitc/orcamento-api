@@ -1,6 +1,7 @@
 package br.com.alura.orcamentoapi.service;
 
-import br.com.alura.orcamentoapi.model.Despesa;
+import br.com.alura.orcamentoapi.model.FORM.RequestDespesa;
+import br.com.alura.orcamentoapi.model.Usuario;
 import br.com.alura.orcamentoapi.model.ValorCategoria;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,21 +12,21 @@ import java.util.List;
 
 public interface DespesaService {
 
-    Despesa adicionaDespesa(Despesa despesa);
+    RequestDespesa adicionaDespesa(RequestDespesa despesa);
 
-    Page<Despesa> buscaTodasDespesas(Pageable pageable);
+    ResponseEntity<Page<RequestDespesa>> buscaTodasDespesas(Pageable pageable);
 
-    Despesa buscaDespesaPorId(Long despesaId);
+    ResponseEntity<RequestDespesa> buscaDespesaPorId(Long despesaId);
 
-    List<Despesa> buscaDespesaPorDesc(String despesaDesc);
+    ResponseEntity<List<RequestDespesa>> buscaDespesaPorDesc(String despesaDesc);
 
-    List<Despesa> buscaTodasDespesasPorMes(int ano, int mes);
+    ResponseEntity<List<RequestDespesa>> buscaTodasDespesasPorMes(int ano, int mes);
 
-    ResponseEntity<Despesa> atualizaDespesa(Long despesaId, Despesa despesaUp);
+    ResponseEntity<RequestDespesa> atualizaDespesa(Long despesaId, RequestDespesa despesaUp);
 
     ResponseEntity<Void> deletaDespesa(Long despesaId);
 
-    List<ValorCategoria> buscaValorTotalPorCategoria(int ano, int mes);
+    List<ValorCategoria> buscaValorTotalPorCategoria(int ano, int mes, Usuario usuario);
 
-    BigDecimal somaTodasDespesasPorData(int ano, int mes);
+    BigDecimal somaTodasDespesasPorData(int ano, int mes, Usuario usuario);
 }

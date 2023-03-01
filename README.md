@@ -2,7 +2,7 @@
 API para gerenciar orçamento mensal familiar.
 
 ## Sobre
-API desenvolvida com o intuito de estudar a linguagem Java usando Spring Framework e PostgreSQL como banco de dados relacional.
+API desenvolvida com o intuito de estudar a linguagem Java usando Spring Framework, e PostgreSQL como banco de dados relacional.
 
 ## Tecnologias utilizadas
 - Java
@@ -16,6 +16,12 @@ API desenvolvida com o intuito de estudar a linguagem Java usando Spring Framewo
 - JUnit
 - Maven
 - Flyway
+
+## Principais Recursos
+- Create, Read, Update, Delete um Usuário
+- Create, Read, Update, Delete uma Despesa
+- Create, Read, Update, Delete uma Receita
+- Retorna um resumo do orçamento mensal do usuário
 
 ## Execução
 
